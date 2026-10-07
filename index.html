@@ -1,0 +1,497 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Bilal Ahmed — photographer and visual artist. Portraits, editorial, architecture, street, nature and fine art. View the portfolio and book a shoot."
+    />
+    <title>Bilal Ahmed — Photographer &amp; Visual Artist</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="preconnect" href="https://images.unsplash.com" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <header class="site-header" id="top">
+      <div class="container header-inner">
+        <a class="brand" href="#home" aria-label="Bilal Ahmed — home">
+          <span class="brand-mark" aria-hidden="true">BA</span>
+          <span class="brand-text">Bilal Ahmed <em>Photography</em></span>
+        </a>
+        <nav class="site-nav" aria-label="Primary">
+          <button
+            class="nav-toggle"
+            type="button"
+            aria-expanded="false"
+            aria-controls="nav-list"
+            aria-label="Open menu"
+          >
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+          </button>
+          <ul class="nav-list" id="nav-list">
+            <li><a href="#home">Home</a></li>
+            <li><a href="#work">Portfolio</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#contact">Contact</a></li>
+            <li class="nav-cta">
+              <a class="btn btn-small" href="#contact">Book a Shoot</a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <main id="main">
+      <!-- 1. Home / Hero -->
+      <section class="hero" id="home" aria-labelledby="hero-heading">
+        <div class="container hero-inner">
+          <div class="hero-copy">
+            <p class="eyebrow">
+              Photographer &amp; Visual Artist — Portland / Available worldwide
+            </p>
+            <h1 id="hero-heading">Light, form &amp; quiet moments.</h1>
+            <p class="lede">
+              I’m Bilal Ahmed. I photograph people, places, and the in-between —
+              portraits and editorial stories told with natural light and a
+              calm, minimal eye.
+            </p>
+
+            <div class="btn-group">
+              <a class="btn btn-primary" href="#work">View Portfolio</a>
+              <a class="btn btn-ghost" href="#contact">Book a Shoot</a>
+            </div>
+
+            <dl class="hero-meta">
+              <div>
+                <dt>Years</dt>
+                <dd>12</dd>
+              </div>
+              <div>
+                <dt>Editorials</dt>
+                <dd>60+</dd>
+              </div>
+              <div>
+                <dt>Exhibitions</dt>
+                <dd>14</dd>
+              </div>
+            </dl>
+          </div>
+
+          <figure class="hero-media">
+            <img
+              src="https://images.unsplash.com/photo-1480429370139-e0132c086e2a?q=80&amp;w=1200&amp;auto=format&amp;fit=crop"
+              alt="Editorial fashion portrait of a young man in soft window light"
+              width="900"
+              height="1150"
+              fetchpriority="high"
+            />
+            <figcaption>Editorial — “Northern Light”, 2025</figcaption>
+          </figure>
+        </div>
+
+        <div class="container press">
+          <span class="press-label">As featured in</span>
+          <ul class="press-list" aria-label="Publications featuring this work">
+            <li>Vogue</li>
+            <li>GQ</li>
+            <li>National Geographic</li>
+            <li>ELLE</li>
+            <li>Vanity Fair</li>
+            <li>TIME</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- 2. Portfolio / Gallery -->
+      <section
+        class="section gallery-section"
+        id="work"
+        aria-labelledby="work-heading"
+      >
+        <div class="container">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Selected work 2019–2026</p>
+              <h2 id="work-heading">Portfolio</h2>
+              <p class="section-sub">
+                A small edit across portraits, editorial, architecture, street,
+                nature, and fine art. Use the filters to browse by series.
+              </p>
+            </div>
+            <a class="btn btn-ghost" href="#contact">Commission a series</a>
+          </div>
+
+          <div
+            class="filters"
+            role="group"
+            aria-label="Filter gallery by category"
+          >
+            <button
+              type="button"
+              class="filter-btn is-active"
+              data-filter="all"
+              aria-pressed="true"
+            >
+              All
+            </button>
+            <button
+              type="button"
+              class="filter-btn"
+              data-filter="portraits"
+              aria-pressed="false"
+            >
+              Portraits
+            </button>
+            <button
+              type="button"
+              class="filter-btn"
+              data-filter="editorial"
+              aria-pressed="false"
+            >
+              Editorial
+            </button>
+            <button
+              type="button"
+              class="filter-btn"
+              data-filter="architecture"
+              aria-pressed="false"
+            >
+              Architecture
+            </button>
+            <button
+              type="button"
+              class="filter-btn"
+              data-filter="street"
+              aria-pressed="false"
+            >
+              Street
+            </button>
+            <button
+              type="button"
+              class="filter-btn"
+              data-filter="nature"
+              aria-pressed="false"
+            >
+              Nature
+            </button>
+            <button
+              type="button"
+              class="filter-btn"
+              data-filter="fine-art"
+              aria-pressed="false"
+            >
+              Fine Art
+            </button>
+          </div>
+
+          <p class="filter-status" id="filter-status" role="status">
+            Showing all 10 works.
+          </p>
+
+          <div class="gallery">
+            <figure class="g-item g-wide" data-category="portraits">
+              <img
+                src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&amp;w=1400&amp;auto=format&amp;fit=crop"
+                alt="Close portrait of a smiling young man in natural light"
+                width="1400"
+                height="900"
+                loading="lazy"
+              />
+              <figcaption>
+                <strong>Theo, in daylight</strong><span>Portraits</span>
+              </figcaption>
+            </figure>
+
+            <figure class="g-item g-tall" data-category="editorial">
+              <img
+                src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&amp;w=900&amp;auto=format&amp;fit=crop"
+                alt="Editorial portrait of a young man in warm side light"
+                width="900"
+                height="1300"
+                loading="lazy"
+              />
+              <figcaption>
+                <strong>Golden Hour</strong><span>Editorial</span>
+              </figcaption>
+            </figure>
+
+            <figure class="g-item" data-category="architecture">
+              <img
+                src="https://images.unsplash.com/photo-1487958449943-2429e8be8625?q=80&amp;w=900&amp;auto=format&amp;fit=crop"
+                alt="Minimal white concrete museum building against a pale sky"
+                width="900"
+                height="900"
+                loading="lazy"
+              />
+              <figcaption>
+                <strong>White Museum</strong><span>Architecture</span>
+              </figcaption>
+            </figure>
+
+            <figure class="g-item" data-category="street">
+              <img
+                src="https://images.unsplash.com/photo-1449824913935-59a10b8d2000?q=80&amp;w=900&amp;auto=format&amp;fit=crop"
+                alt="City street at dusk with taxis and glowing shopfronts"
+                width="900"
+                height="900"
+                loading="lazy"
+              />
+              <figcaption>
+                <strong>Rush Hour, 6:41pm</strong><span>Street</span>
+              </figcaption>
+            </figure>
+
+            <figure class="g-item g-tall" data-category="nature">
+              <img
+                src="https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&amp;w=900&amp;auto=format&amp;fit=crop"
+                alt="Sunlight breaking through a dense green forest path"
+                width="900"
+                height="1300"
+                loading="lazy"
+              />
+              <figcaption>
+                <strong>Cedar Path</strong><span>Nature</span>
+              </figcaption>
+            </figure>
+
+            <figure class="g-item" data-category="portraits">
+              <img
+                src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&amp;w=900&amp;auto=format&amp;fit=crop"
+                alt="Black and white style portrait of a bearded man looking away"
+                width="900"
+                height="900"
+                loading="lazy"
+              />
+              <figcaption>
+                <strong>Jonas</strong><span>Portraits</span>
+              </figcaption>
+            </figure>
+
+            <figure class="g-item g-wide" data-category="architecture">
+              <img
+                src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&amp;w=1400&amp;auto=format&amp;fit=crop"
+                alt="Geometric glass office facade seen from below"
+                width="1400"
+                height="900"
+                loading="lazy"
+              />
+              <figcaption>
+                <strong>Glass Grid</strong><span>Architecture</span>
+              </figcaption>
+            </figure>
+
+            <figure class="g-item" data-category="street">
+              <img
+                src="https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?q=80&amp;w=900&amp;auto=format&amp;fit=crop"
+                alt="Chicago skyline across the river at blue hour"
+                width="900"
+                height="900"
+                loading="lazy"
+              />
+              <figcaption>
+                <strong>Blue Hour Crossing</strong><span>Street</span>
+              </figcaption>
+            </figure>
+
+            <figure class="g-item" data-category="nature">
+              <img
+                src="https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?q=80&amp;w=900&amp;auto=format&amp;fit=crop"
+                alt="Fog rolling over layered green hills at sunrise"
+                width="900"
+                height="900"
+                loading="lazy"
+              />
+              <figcaption>
+                <strong>First Fog</strong><span>Nature</span>
+              </figcaption>
+            </figure>
+
+            <figure class="g-item g-wide" data-category="fine-art">
+              <img
+                src="https://images.unsplash.com/photo-1541961017774-22349e4a1262?q=80&amp;w=1400&amp;auto=format&amp;fit=crop"
+                alt="Abstract fine art photograph of layered paint textures in ochre and black"
+                width="1400"
+                height="900"
+                loading="lazy"
+              />
+              <figcaption>
+                <strong>Ochre Study No. 4</strong><span>Fine Art</span>
+              </figcaption>
+            </figure>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. About -->
+      <section
+        class="section about-section"
+        id="about"
+        aria-labelledby="about-heading"
+      >
+        <div class="container about-inner">
+          <figure class="about-media">
+            <img
+              src="https://images.unsplash.com/photo-1502920917128-1aa500764cbd?q=80&amp;w=800&amp;auto=format&amp;fit=crop"
+              alt="Bilal Ahmed holding a camera on location at dusk"
+              width="800"
+              height="1000"
+              loading="lazy"
+            />
+          </figure>
+
+          <div class="about-copy">
+            <p class="eyebrow">About</p>
+            <h2 id="about-heading">A calm eye for real life.</h2>
+            <p>
+              I’m Bilal Ahmed, a photographer and visual artist based in
+              Portland. For the past twelve years I’ve shot portraits,
+              editorials, and spaces — always chasing honest light and unforced
+              moments.
+            </p>
+            <p>
+              My work has appeared in print and on gallery walls, but most days
+              you’ll find me on location with a small crew: one camera,
+              available light, and room for people to be themselves.
+            </p>
+            <a class="text-link" href="#contact"
+              >Tell me about your project →</a
+            >
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. Contact / Book a Shoot -->
+      <section
+        class="section contact-section"
+        id="contact"
+        aria-labelledby="contact-heading"
+      >
+        <div class="container contact-inner">
+          <div class="contact-info">
+            <p class="eyebrow">Contact — bookings open for 2026</p>
+            <h2 id="contact-heading">Book a Shoot</h2>
+            <p class="section-sub">
+              Portraits, weddings, editorial assignments, and commissions. Share
+              a few details and I’ll reply within two working days.
+            </p>
+
+            <ul class="contact-list">
+              <li>
+                <strong>Email</strong
+                ><a href="mailto:hello@bilalahmed.photo"
+                  >hello@bilalahmed.photo</a
+                >
+              </li>
+              <li>
+                <strong>Studio</strong
+                ><span>214 SE Alder St, Portland, OR</span>
+              </li>
+              <li>
+                <strong>Phone</strong
+                ><a href="tel:+15035550194">+1 (503) 555-0194</a>
+              </li>
+            </ul>
+
+            <p class="contact-note">
+              Currently booking March–September 2026. Travel available.
+            </p>
+          </div>
+
+          <form
+            class="contact-form"
+            id="booking-form"
+            action="#"
+            method="post"
+            novalidate
+          >
+            <div class="field">
+              <label for="field-name">Name</label>
+              <input
+                type="text"
+                id="field-name"
+                name="name"
+                autocomplete="name"
+                placeholder="Jane Appleseed"
+                required
+                minlength="2"
+              />
+              <small class="field-error" id="error-name" hidden></small>
+            </div>
+
+            <div class="field">
+              <label for="field-email">Email</label>
+              <input
+                type="email"
+                id="field-email"
+                name="email"
+                autocomplete="email"
+                placeholder="jane@example.com"
+                required
+              />
+              <small class="field-error" id="error-email" hidden></small>
+            </div>
+
+            <div class="field">
+              <label for="field-type">Project type</label>
+              <select id="field-type" name="project-type" required>
+                <option value="" selected>Select a project type</option>
+                <option value="portrait">Portrait session</option>
+                <option value="wedding">Wedding / event</option>
+                <option value="editorial">Editorial / commercial</option>
+                <option value="fine-art">Fine art commission</option>
+                <option value="other">Something else</option>
+              </select>
+              <small class="field-error" id="error-type" hidden></small>
+            </div>
+
+            <div class="field">
+              <label for="field-message">Message</label>
+              <textarea
+                id="field-message"
+                name="message"
+                rows="5"
+                placeholder="Date, location, and what you have in mind…"
+                required
+                minlength="20"
+              ></textarea>
+              <small class="field-error" id="error-message" hidden></small>
+            </div>
+
+            <button class="btn btn-primary" type="submit">Send Inquiry</button>
+            <p
+              class="form-status"
+              id="form-status"
+              role="status"
+              aria-live="polite"
+            ></p>
+          </form>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-inner">
+        <p class="footer-brand">Bilal Ahmed <span>Photography</span></p>
+        <nav aria-label="Footer">
+          <ul class="footer-nav">
+            <li><a href="#home">Home</a></li>
+            <li><a href="#work">Portfolio</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#contact">Book a Shoot</a></li>
+          </ul>
+        </nav>
+
+        <p class="footer-meta">
+          © <span id="year">2026</span> Bilal Ahmed. All photographs by the
+          artist.
+        </p>
+      </div>
+    </footer>
+
+    <script src="js/script.js"></script>
+  </body>
+</html>
