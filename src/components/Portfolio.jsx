@@ -1,25 +1,35 @@
 import { useMemo, useState } from "react";
 import { CATEGORIES, WORKS } from "../data/works.js";
+import useFavorites from "../hooks/useFavorites.js";
 import Button from "./ui/Button.jsx";
 import Container from "./ui/Container.jsx";
 import Eyebrow from "./ui/Eyebrow.jsx";
+import FilterTabs from "./FilterTabs.jsx";
 import GalleryCard from "./GalleryCard.jsx";
+import HeartIcon from "./ui/HeartIcon.jsx";
 
 export default function Portfolio() {
   const [activeFilter, setActiveFilter] = useState("all");
+  const { favorites, favoriteCount, toggleFavorite, isFavorite } =
+    useFavorites();
 
-  const filteredWorks = useMemo(
-    () =>
-      activeFilter === "all"
-        ? WORKS
-        : WORKS.filter((work) => work.category === activeFilter),
-    [activeFilter],
-  );
+  const isFavoritesView = activeFilter === "favorites";
 
-  const activeLabel =
-    activeFilter === "all"
+  const filteredWorks = useMemo(() => {
+    if (isFavoritesView) {
+      return WORKS.filter((work) => favorites.includes(work.id));
+    }
+    return activeFilter === "all"
+      ? WORKS
+      : WORKS.filter((work) => work.category === activeFilter);
+  }, [activeFilter, isFavoritesView, favorites]);
+
+  const activeLabel = isFavoritesView
+    ? "favorites"
+    : activeFilter === "all"
       ? "all"
-      : (CATEGORIES.find((c) => c.value === activeFilter)?.label ?? activeFilter);
+      : (CATEGORIES.find((c) => c.value === activeFilter)?.label ??
+        activeFilter);
 
   return (
     <section
@@ -39,7 +49,8 @@ export default function Portfolio() {
             </h2>
             <p className="mt-3 max-w-[65ch] text-muted">
               A small edit across portraits, editorial, architecture, street,
-              nature, and fine art. Use the filters to browse by series.
+              nature, and fine art. Use the filters to browse by series — tap
+              the heart to save works to your favorites.
             </p>
           </div>
           <Button
@@ -51,50 +62,62 @@ export default function Portfolio() {
           </Button>
         </div>
 
-        <div
-          role="group"
-          aria-label="Filter gallery by category"
-          className="mb-3 flex flex-wrap gap-2"
-        >
-          {CATEGORIES.map((category) => {
-            const isActive = category.value === activeFilter;
-            return (
-              <button
-                key={category.value}
-                type="button"
-                onClick={() => setActiveFilter(category.value)}
-                aria-pressed={isActive}
-                className={`rounded-full border px-4 py-2 text-sm font-semibold shadow-sm transition-colors ${
-                  isActive
-                    ? "border-coal bg-coal text-white"
-                    : "border-sand bg-white text-muted hover:border-ink hover:text-ink"
-                }`}
-              >
-                {category.label}
-              </button>
-            );
-          })}
-        </div>
+        <FilterTabs
+          active={activeFilter}
+          onChange={setActiveFilter}
+          favoriteCount={favoriteCount}
+        />
 
         <p role="status" className="mb-6 text-sm text-muted">
           {filteredWorks.length === 0 ? (
-            "No works in this series yet."
+            isFavoritesView ? (
+              "No saved works yet."
+            ) : (
+              "No works in this series yet."
+            )
           ) : (
             <>
               Showing{" "}
               <strong className="font-semibold text-ink">
-                {filteredWorks.length} of {WORKS.length}
+                {filteredWorks.length} of {isFavoritesView ? favoriteCount : WORKS.length}
               </strong>{" "}
               works — {activeLabel}.
             </>
           )}
         </p>
 
-        <div className="columns-1 gap-5 sm:columns-2 lg:columns-3 xl:columns-4">
-          {filteredWorks.map((work) => (
-            <GalleryCard key={work.id} work={work} />
-          ))}
-        </div>
+        {filteredWorks.length === 0 && isFavoritesView ? (
+          <div className="flex flex-col items-center gap-3 rounded-2xl border-2 border-dashed border-sand bg-cream/60 px-6 py-14 text-center">
+            <span className="flex h-14 w-14 items-center justify-center rounded-full bg-rose-600/10 text-rose-500">
+              <HeartIcon filled={false} size={26} />
+            </span>
+            <p className="font-display text-2xl font-medium text-ink">
+              No favorites yet
+            </p>
+            <p className="max-w-[42ch] text-sm text-muted">
+              Tap the heart on any photo to save it here — your picks are kept
+              on this device, even after a refresh.
+            </p>
+            <Button
+              variant="primary"
+              onClick={() => setActiveFilter("all")}
+              className="mt-2"
+            >
+              Browse all works
+            </Button>
+          </div>
+        ) : (
+          <div className="columns-1 gap-5 sm:columns-2 lg:columns-3 xl:columns-4">
+            {filteredWorks.map((work) => (
+              <GalleryCard
+                key={work.id}
+                work={work}
+                liked={isFavorite(work.id)}
+                onToggleLike={toggleFavorite}
+              />
+            ))}
+          </div>
+        )}
       </Container>
     </section>
   );
