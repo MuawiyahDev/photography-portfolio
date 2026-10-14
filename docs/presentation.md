@@ -88,6 +88,7 @@ One honest note: a website alone can't send messages to the owner's inbox — th
 - The gallery is a masonry layout: each photo keeps its natural shape, so nothing gets cropped — square, tall, or wide
 - Layout grows step by step: 1 column on phones, up to 4 on big screens
 - Photo captions are always readable on touch screens; zoom-on-hover is just a bonus on desktop
+- Dark and light appearance follow the device setting automatically — no switch needed
 - Nothing scrolls sideways on any screen size
 
 ---

@@ -1,7 +1,5 @@
 @import "tailwindcss";
 
-@custom-variant dark (&:where(.dark, .dark *));
-
 @theme {
   --color-cream: #faf8f4;
   --color-ink: #201c17;
@@ -36,13 +34,15 @@ body {
     color 0.2s ease;
 }
 
-html.dark {
-  color-scheme: dark;
+@media (prefers-color-scheme: dark) {
+  body {
+    background-color: #161310;
+    color: #f4efe7;
+  }
 }
 
-html.dark body {
-  background-color: #161310;
-  color: #f4efe7;
+:root {
+  color-scheme: light dark;
 }
 
 img {

@@ -2,9 +2,8 @@ import { useEffect, useState } from "react";
 import { NAV_LINKS } from "../data/site.js";
 import Button from "./ui/Button.jsx";
 import Container from "./ui/Container.jsx";
-import ThemeToggle from "./ui/ThemeToggle.jsx";
 
-export default function Header({ theme, onToggleTheme }) {
+export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
@@ -44,9 +43,7 @@ export default function Header({ theme, onToggleTheme }) {
           </span>
         </a>
 
-        <div className="flex items-center gap-2">
-          <ThemeToggle theme={theme} onToggle={onToggleTheme} />
-          <nav aria-label="Primary" className="flex items-center">
+        <nav aria-label="Primary" className="flex items-center">
           <button
             type="button"
             aria-expanded={menuOpen}
@@ -92,8 +89,7 @@ export default function Header({ theme, onToggleTheme }) {
               </Button>
             </li>
           </ul>
-          </nav>
-        </div>
+        </nav>
       </Container>
     </header>
   );
