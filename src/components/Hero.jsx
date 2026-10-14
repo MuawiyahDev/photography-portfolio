@@ -65,10 +65,15 @@ export default function Hero() {
             aria-label="Publications featuring this work"
             className="flex flex-wrap items-center justify-center gap-y-2 font-display text-lg tracking-wide"
           >
-            {PRESS_LIST.map((name) => (
+            {PRESS_LIST.map((name, index) => (
               <li key={name} className="flex items-center whitespace-nowrap">
+                {index > 0 && (
+                  <span
+                    aria-hidden="true"
+                    className="mx-4 h-1.5 w-1.5 shrink-0 rounded-full bg-pine/50 sm:mx-7"
+                  />
+                )}
                 {name}
-                <span aria-hidden="true" className="mx-4 h-1.5 w-1.5 rounded-full bg-pine/50 sm:mx-7" />
               </li>
             ))}
           </ul>
