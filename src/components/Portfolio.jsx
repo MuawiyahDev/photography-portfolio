@@ -90,13 +90,9 @@ export default function Portfolio() {
           )}
         </p>
 
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:auto-rows-[15rem] sm:gap-5 sm:[grid-auto-flow:dense] lg:grid-cols-4">
+        <div className="columns-1 gap-5 sm:columns-2 lg:columns-3 xl:columns-4">
           {filteredWorks.map((work) => (
-            <GalleryCard
-              key={work.id}
-              work={work}
-              uniform={activeFilter !== "all"}
-            />
+            <GalleryCard key={work.id} work={work} />
           ))}
         </div>
       </Container>
