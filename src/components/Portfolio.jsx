@@ -92,7 +92,11 @@ export default function Portfolio() {
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:auto-rows-[15rem] sm:gap-5 sm:[grid-auto-flow:dense] lg:grid-cols-4">
           {filteredWorks.map((work) => (
-            <GalleryCard key={work.id} work={work} />
+            <GalleryCard
+              key={work.id}
+              work={work}
+              uniform={activeFilter !== "all"}
+            />
           ))}
         </div>
       </Container>

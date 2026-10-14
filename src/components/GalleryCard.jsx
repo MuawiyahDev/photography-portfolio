@@ -7,20 +7,24 @@ import StarRating from "./StarRating.jsx";
  *   base: every card gets a natural photo aspect so single-column
  *         rows size themselves (no fixed heights, no cropping surprises)
  *   sm+:  grid auto-rows take over (aspect-auto), spans build the mosaic
+ *   uniform (active while filtering): spans off so every visible card
+ *         is the same size and no holes are left in the grid
  */
-function figureClass(span) {
-  if (span === "wide") return "aspect-[16/10] sm:col-span-2 sm:aspect-auto";
-  if (span === "tall") return "aspect-[3/4] sm:row-span-2 sm:aspect-auto";
+function figureClass(span, uniform) {
+  if (!uniform && span === "wide")
+    return "aspect-[16/10] sm:col-span-2 sm:aspect-auto";
+  if (!uniform && span === "tall")
+    return "aspect-[3/4] sm:row-span-2 sm:aspect-auto";
   return "aspect-[4/3] sm:aspect-auto";
 }
 
-export default function GalleryCard({ work }) {
+export default function GalleryCard({ work, uniform = false }) {
   const [rating, setRating] = useState(0);
   const [liked, setLiked] = useState(false);
 
   return (
     <figure
-      className={`group relative min-h-0 min-w-0 overflow-hidden rounded-xl bg-sand shadow-sm ring-1 ring-black/5 transition-shadow duration-300 hover:shadow-xl ${figureClass(work.span)}`}
+      className={`group relative min-h-0 min-w-0 overflow-hidden rounded-xl bg-sand shadow-sm ring-1 ring-black/5 transition-shadow duration-300 hover:shadow-xl ${figureClass(work.span, uniform)}`}
     >
       <img
         src={work.src}
