@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   --color-cream: #faf8f4;
   --color-ink: #201c17;
@@ -29,6 +31,18 @@ body {
   color: var(--color-ink);
   line-height: 1.6;
   overflow-x: clip;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+html.dark {
+  color-scheme: dark;
+}
+
+html.dark body {
+  background-color: #161310;
+  color: #f4efe7;
 }
 
 img {
