@@ -22,6 +22,43 @@ function validate(values) {
   return errors;
 }
 
+function MailIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+      <rect x="1.5" y="3" width="13" height="10" rx="2" stroke="currentColor" strokeWidth="1.5" />
+      <path d="m3 5 5 4 5-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function PinIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+      <path
+        d="M8 14s4.5-4 4.5-7.5A4.5 4.5 0 0 0 8 2 4.5 4.5 0 0 0 3.5 6.5C3.5 10 8 14 8 14Z"
+        stroke="currentColor"
+        strokeWidth="1.5"
+      />
+      <circle cx="8" cy="6.5" r="1.75" stroke="currentColor" strokeWidth="1.5" />
+    </svg>
+  );
+}
+
+function PhoneIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+      <path
+        d="M3 2.5h2.6l1.1 3-1.6 1.2a8.5 8.5 0 0 0 3.2 3.2l1.2-1.6 3 1.1V12a1.5 1.5 0 0 1-1.6 1.5C6.4 13.3 2.7 9.6 2.5 4.1A1.5 1.5 0 0 1 3 2.5Z"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+const ICONS = { email: MailIcon, text: PinIcon, phone: PhoneIcon };
+
 function Field({ id, label, error, children }) {
   return (
     <div className="grid min-w-0 gap-1.5">
@@ -39,8 +76,10 @@ function Field({ id, label, error, children }) {
 }
 
 const inputClass = (hasError) =>
-  `w-full max-w-full rounded-lg border bg-white px-3.5 py-3 text-ink ${
-    hasError ? "border-error" : "border-sand"
+  `w-full max-w-full rounded-xl border bg-white px-4 py-3 text-ink outline-none transition placeholder:text-ink/35 focus:ring-2 ${
+    hasError
+      ? "border-error focus:border-error focus:ring-error/20"
+      : "border-sand focus:border-pine focus:ring-pine/25"
   }`;
 
 export default function Contact() {
@@ -84,9 +123,18 @@ export default function Contact() {
     <section
       id="contact"
       aria-labelledby="contact-heading"
-      className="bg-coal py-14 text-[#f4efe7] sm:py-20"
+      className="relative overflow-hidden bg-coal py-14 text-[#f4efe7] sm:py-20 lg:py-24"
     >
-      <Container className="flex flex-col items-stretch gap-8 md:flex-row md:items-start lg:gap-16">
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -top-32 right-0 h-80 w-80 rounded-full bg-pine/25 blur-3xl"
+      />
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -bottom-40 -left-24 h-80 w-80 rounded-full bg-pine/15 blur-3xl"
+      />
+
+      <Container className="relative flex flex-col items-stretch gap-10 md:flex-row md:items-start lg:gap-16">
         <div className="min-w-0 flex-1">
           <Eyebrow tone="dark">Contact — bookings open for 2026</Eyebrow>
           <h2
@@ -100,67 +148,82 @@ export default function Contact() {
             few details and I&rsquo;ll reply within two working days.
           </p>
 
-          <ul className="mt-7 list-none border-t border-white/15">
-            {CONTACT_DETAILS.map((item) => (
-              <li
-                key={item.label}
-                className="flex flex-col gap-0.5 border-b border-white/15 py-3.5 sm:flex-row sm:items-baseline sm:justify-between sm:gap-4"
-              >
-                <strong className="shrink-0 text-xs font-bold uppercase tracking-[0.12em] text-clay">
-                  {item.label}
-                </strong>
-                {item.href ? (
-                  <a
-                    href={item.href}
-                    className="break-all text-white underline underline-offset-4 sm:text-right"
-                  >
-                    {item.value}
-                  </a>
-                ) : (
-                  <span className="sm:text-right">{item.value}</span>
-                )}
-              </li>
-            ))}
+          <ul className="mt-8 grid gap-3">
+            {CONTACT_DETAILS.map((item) => {
+              const Icon = ICONS[item.type] ?? PinIcon;
+              return (
+                <li
+                  key={item.label}
+                  className="flex min-w-0 items-center gap-3.5 rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3.5"
+                >
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/10 text-clay">
+                    <Icon />
+                  </span>
+                  <span className="min-w-0">
+                    <strong className="block text-[0.7rem] font-bold uppercase tracking-[0.14em] text-clay">
+                      {item.label}
+                    </strong>
+                    {item.href ? (
+                      <a
+                        href={item.href}
+                        className="block truncate text-white underline decoration-white/30 underline-offset-4 transition-colors hover:decoration-white"
+                      >
+                        {item.value}
+                      </a>
+                    ) : (
+                      <span className="block truncate">{item.value}</span>
+                    )}
+                  </span>
+                </li>
+              );
+            })}
           </ul>
-          <p className="mt-5 text-sm text-clay">
-            Currently booking March–September 2026. Travel available.
+
+          <p className="mt-6 inline-flex items-center gap-2.5 rounded-full border border-white/15 bg-white/[0.04] px-4 py-2 text-xs font-medium text-clay">
+            <span className="relative flex h-2 w-2">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-60" />
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-400" />
+            </span>
+            Booking March–September 2026 · Travel available
           </p>
         </div>
 
         <form
           onSubmit={handleSubmit}
           noValidate
-          className="grid min-w-0 flex-1 gap-4 rounded-[0.625rem] bg-white p-5 text-ink sm:p-7 md:flex-[1.4]"
+          className="grid min-w-0 flex-1 gap-4 rounded-2xl bg-white p-5 text-ink shadow-2xl ring-1 ring-black/10 sm:p-7 lg:p-8 md:flex-[1.4]"
         >
-          <Field id="field-name" label="Name" error={errors.name}>
-            <input
-              id="field-name"
-              name="name"
-              type="text"
-              autoComplete="name"
-              placeholder="Jane Appleseed"
-              value={values.name}
-              onChange={handleChange}
-              aria-invalid={Boolean(errors.name)}
-              aria-describedby={errors.name ? "field-name-error" : undefined}
-              className={inputClass(errors.name)}
-            />
-          </Field>
+          <div className="grid min-w-0 gap-4 sm:grid-cols-2">
+            <Field id="field-name" label="Name" error={errors.name}>
+              <input
+                id="field-name"
+                name="name"
+                type="text"
+                autoComplete="name"
+                placeholder="Jane Appleseed"
+                value={values.name}
+                onChange={handleChange}
+                aria-invalid={Boolean(errors.name)}
+                aria-describedby={errors.name ? "field-name-error" : undefined}
+                className={inputClass(errors.name)}
+              />
+            </Field>
 
-          <Field id="field-email" label="Email" error={errors.email}>
-            <input
-              id="field-email"
-              name="email"
-              type="email"
-              autoComplete="email"
-              placeholder="jane@example.com"
-              value={values.email}
-              onChange={handleChange}
-              aria-invalid={Boolean(errors.email)}
-              aria-describedby={errors.email ? "field-email-error" : undefined}
-              className={inputClass(errors.email)}
-            />
-          </Field>
+            <Field id="field-email" label="Email" error={errors.email}>
+              <input
+                id="field-email"
+                name="email"
+                type="email"
+                autoComplete="email"
+                placeholder="jane@example.com"
+                value={values.email}
+                onChange={handleChange}
+                aria-invalid={Boolean(errors.email)}
+                aria-describedby={errors.email ? "field-email-error" : undefined}
+                className={inputClass(errors.email)}
+              />
+            </Field>
+          </div>
 
           <Field id="field-type" label="Project type" error={errors.projectType}>
             <select
@@ -197,23 +260,23 @@ export default function Contact() {
 
           <button
             type="submit"
-            className="inline-flex items-center justify-center rounded-full bg-pine px-6 py-3 font-semibold text-white transition-colors hover:bg-pine-dark"
+            className="inline-flex w-full items-center justify-center rounded-full bg-pine px-6 py-3.5 font-semibold text-white transition-colors hover:bg-pine-dark sm:w-auto sm:justify-self-start"
           >
-            Send Inquiry
+            Send Inquiry →
           </button>
-          <p
-            role="status"
-            aria-live="polite"
-            className={`min-h-[1.5em] text-[0.95rem] ${
-              status.type === "success"
-                ? "font-semibold text-success"
-                : status.type === "error"
-                  ? "font-semibold text-error"
-                  : ""
-            }`}
-          >
-            {status.message}
-          </p>
+          {status.message ? (
+            <p
+              role="status"
+              aria-live="polite"
+              className={`rounded-xl px-4 py-3 text-sm font-medium ${
+                status.type === "success"
+                  ? "bg-green-50 text-success ring-1 ring-green-600/20"
+                  : "bg-red-50 text-error ring-1 ring-red-600/20"
+              }`}
+            >
+              {status.message}
+            </p>
+          ) : null}
         </form>
       </Container>
     </section>
