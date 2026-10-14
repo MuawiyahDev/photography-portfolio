@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { CONTACT_DETAILS, PROJECT_TYPES } from "../data/site.js";
+import useLocalStorage from "../hooks/useLocalStorage.js";
 import Container from "./ui/Container.jsx";
 import Eyebrow from "./ui/Eyebrow.jsx";
 
 const INITIAL_VALUES = { name: "", email: "", projectType: "", message: "" };
+const MESSAGE_MIN = 20;
 
 function validate(values) {
   const errors = {};
@@ -16,8 +18,8 @@ function validate(values) {
   if (!values.projectType) {
     errors.projectType = "Please choose a project type.";
   }
-  if (values.message.trim().length < 20) {
-    errors.message = "Tell me a little more (at least 20 characters).";
+  if (values.message.trim().length < MESSAGE_MIN) {
+    errors.message = `Tell me a little more (at least ${MESSAGE_MIN} characters).`;
   }
   return errors;
 }
@@ -57,17 +59,84 @@ function PhoneIcon() {
   );
 }
 
+function UserIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+      <circle cx="8" cy="5.5" r="2.75" stroke="currentColor" strokeWidth="1.5" />
+      <path
+        d="M2.5 13.5c.8-2.6 2.9-4 5.5-4s4.7 1.4 5.5 4"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
+function TagIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+      <path
+        d="M2.5 2.5h4L13.5 9.5a1 1 0 0 1 0 1.4l-2.6 2.6a1 1 0 0 1-1.4 0L2.5 6.5v-4Z"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinejoin="round"
+      />
+      <circle cx="6" cy="6" r="1.25" fill="currentColor" />
+    </svg>
+  );
+}
+
+function ChevronDownIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+      <path
+        d="m4 6 4 4 4-4"
+        stroke="currentColor"
+        strokeWidth="1.75"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
 const ICONS = { email: MailIcon, text: PinIcon, phone: PhoneIcon };
 
-function Field({ id, label, error, children }) {
+function Field({ id, label, error, hint, icon, iconTop = false, children }) {
   return (
     <div className="grid min-w-0 gap-1.5">
-      <label htmlFor={id} className="text-sm font-semibold">
-        {label}
-      </label>
-      {children}
+      <div className="flex min-w-0 items-baseline justify-between gap-2">
+        <label htmlFor={id} className="text-sm font-semibold">
+          {label}{" "}
+          <span aria-hidden="true" className="font-normal text-error">
+            *
+          </span>
+        </label>
+        {hint ? (
+          <span className="shrink-0 text-xs font-medium text-ink/45">{hint}</span>
+        ) : null}
+      </div>
+      <div className="relative min-w-0">
+        {icon ? (
+          <span
+            aria-hidden="true"
+            className={`pointer-events-none absolute left-3.5 text-ink/35 ${
+              iconTop ? "top-3.5" : "top-1/2 -translate-y-1/2"
+            }`}
+          >
+            {icon}
+          </span>
+        ) : null}
+        {children}
+      </div>
       {error ? (
-        <small id={`${id}-error`} className="text-sm text-error">
+        <small id={`${id}-error`} className="flex items-center gap-1.5 text-sm text-error">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true" className="shrink-0">
+            <circle cx="7" cy="7" r="6" stroke="currentColor" strokeWidth="1.5" />
+            <path d="M7 4v3.2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+            <circle cx="7" cy="9.8" r="0.9" fill="currentColor" />
+          </svg>
           {error}
         </small>
       ) : null}
@@ -75,15 +144,22 @@ function Field({ id, label, error, children }) {
   );
 }
 
-const inputClass = (hasError) =>
-  `w-full max-w-full rounded-xl border bg-white px-4 py-3 text-ink outline-none transition placeholder:text-ink/35 focus:ring-2 ${
+const inputClass = (hasError, withIcon = false) =>
+  `w-full max-w-full rounded-xl border bg-cream/50 py-3 text-ink shadow-[inset_0_1px_2px_rgba(32,28,23,0.05)] outline-none transition placeholder:text-ink/35 focus:bg-white focus:ring-2 ${
+    withIcon ? "pl-10 pr-4" : "px-4"
+  } ${
     hasError
       ? "border-error focus:border-error focus:ring-error/20"
-      : "border-sand focus:border-pine focus:ring-pine/25"
+      : "border-sand hover:border-ink/30 focus:border-pine focus:ring-pine/25"
   }`;
 
 export default function Contact() {
-  const [values, setValues] = useState(INITIAL_VALUES);
+  // Draft autosave: typed text survives a refresh on this device.
+  // (Delivery still needs a backend or form-to-email service — see notes.)
+  const [values, setValues] = useLocalStorage(
+    "bilal-ahmed-portfolio:contact-draft:v1",
+    INITIAL_VALUES,
+  );
   const [errors, setErrors] = useState({});
   const [status, setStatus] = useState({ type: "", message: "" });
 
@@ -118,6 +194,10 @@ export default function Contact() {
     });
     setValues(INITIAL_VALUES);
   };
+
+  const messageLen = values.message.trim().length;
+  const messageMet = messageLen >= MESSAGE_MIN;
+  const hasDraft = Object.values(values).some((v) => v.trim().length > 0);
 
   return (
     <section
@@ -154,7 +234,7 @@ export default function Contact() {
               return (
                 <li
                   key={item.label}
-                  className="flex min-w-0 items-center gap-3.5 rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3.5"
+                  className="flex min-w-0 items-center gap-3.5 rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3.5 transition-colors hover:border-white/25"
                 >
                   <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/10 text-clay">
                     <Icon />
@@ -191,10 +271,15 @@ export default function Contact() {
         <form
           onSubmit={handleSubmit}
           noValidate
-          className="grid min-w-0 flex-1 gap-4 rounded-2xl bg-white p-5 text-ink shadow-2xl ring-1 ring-black/10 sm:p-7 lg:p-8 md:flex-[1.4]"
+          className="grid min-w-0 flex-1 gap-5 rounded-2xl bg-white p-5 text-ink shadow-2xl ring-1 ring-black/10 sm:p-7 lg:p-8 md:flex-[1.4]"
         >
-          <div className="grid min-w-0 gap-4 sm:grid-cols-2">
-            <Field id="field-name" label="Name" error={errors.name}>
+          <div className="grid min-w-0 gap-5 sm:grid-cols-2">
+            <Field
+              id="field-name"
+              label="Name"
+              error={errors.name}
+              icon={<UserIcon />}
+            >
               <input
                 id="field-name"
                 name="name"
@@ -205,11 +290,16 @@ export default function Contact() {
                 onChange={handleChange}
                 aria-invalid={Boolean(errors.name)}
                 aria-describedby={errors.name ? "field-name-error" : undefined}
-                className={inputClass(errors.name)}
+                className={inputClass(errors.name, true)}
               />
             </Field>
 
-            <Field id="field-email" label="Email" error={errors.email}>
+            <Field
+              id="field-email"
+              label="Email"
+              error={errors.email}
+              icon={<MailIcon />}
+            >
               <input
                 id="field-email"
                 name="email"
@@ -220,12 +310,17 @@ export default function Contact() {
                 onChange={handleChange}
                 aria-invalid={Boolean(errors.email)}
                 aria-describedby={errors.email ? "field-email-error" : undefined}
-                className={inputClass(errors.email)}
+                className={inputClass(errors.email, true)}
               />
             </Field>
           </div>
 
-          <Field id="field-type" label="Project type" error={errors.projectType}>
+          <Field
+            id="field-type"
+            label="Project type"
+            error={errors.projectType}
+            icon={<TagIcon />}
+          >
             <select
               id="field-type"
               name="projectType"
@@ -233,7 +328,7 @@ export default function Contact() {
               onChange={handleChange}
               aria-invalid={Boolean(errors.projectType)}
               aria-describedby={errors.projectType ? "field-type-error" : undefined}
-              className={inputClass(errors.projectType)}
+              className={`${inputClass(errors.projectType, true)} appearance-none pr-10 ${values.projectType ? "" : "text-ink/35"}`}
             >
               <option value="">Select a project type</option>
               {PROJECT_TYPES.map((type) => (
@@ -242,9 +337,24 @@ export default function Contact() {
                 </option>
               ))}
             </select>
+            <span
+              aria-hidden="true"
+              className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 text-ink/40"
+            >
+              <ChevronDownIcon />
+            </span>
           </Field>
 
-          <Field id="field-message" label="Message" error={errors.message}>
+          <Field
+            id="field-message"
+            label="Message"
+            error={errors.message}
+            hint={
+              <span className={messageMet ? "text-success" : undefined}>
+                {messageLen}/{MESSAGE_MIN} min
+              </span>
+            }
+          >
             <textarea
               id="field-message"
               name="message"
@@ -258,12 +368,20 @@ export default function Contact() {
             />
           </Field>
 
-          <button
-            type="submit"
-            className="inline-flex w-full items-center justify-center rounded-full bg-pine px-6 py-3.5 font-semibold text-white transition-colors hover:bg-pine-dark sm:w-auto sm:justify-self-start"
-          >
-            Send Inquiry →
-          </button>
+          <div className="grid gap-2.5">
+            <button
+              type="submit"
+              className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-pine px-6 py-3.5 font-semibold text-white shadow-lg shadow-pine/25 transition-all hover:bg-pine-dark active:scale-[0.98] sm:w-auto sm:justify-self-start"
+            >
+              Send Inquiry
+              <span aria-hidden="true">→</span>
+            </button>
+            <p className="text-xs text-ink/45">
+              {hasDraft
+                ? "Draft auto-saved on this device — safe to refresh."
+                : "Typically replies within two working days."}
+            </p>
+          </div>
           {status.message ? (
             <p
               role="status"
