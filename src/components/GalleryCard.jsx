@@ -19,7 +19,7 @@ export default function GalleryCard({
   onRate,
 }) {
   return (
-    <figure className="group relative mb-5 min-w-0 break-inside-avoid overflow-hidden rounded-xl bg-sand shadow-sm ring-1 ring-black/5 transition-shadow duration-300 hover:shadow-xl">
+    <figure className="group relative mb-5 min-w-0 break-inside-avoid overflow-hidden rounded-xl bg-sand shadow-sm ring-1 ring-black/5 transition-shadow duration-300 hover:shadow-xl dark:bg-white/10 dark:ring-white/10">
       <img
         src={work.src}
         alt={work.alt}

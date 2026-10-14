@@ -1,7 +1,8 @@
 const VARIANTS = {
   primary: "border-pine bg-pine text-white hover:bg-pine-dark hover:border-pine-dark",
-  ghost: "border-sand bg-transparent text-ink hover:border-ink",
-  dark: "bg-coal text-white border border-coal hover:bg-pine hover:border-pine",
+  ghost:
+    "border-sand bg-transparent text-ink hover:border-ink dark:border-white/20 dark:text-cream dark:hover:border-white",
+  dark: "bg-coal text-white border border-coal hover:bg-pine hover:border-pine dark:bg-cream dark:text-coal dark:border-cream dark:hover:bg-white dark:hover:border-white",
   small: "",
 };
 

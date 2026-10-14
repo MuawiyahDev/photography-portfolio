@@ -43,7 +43,7 @@ export default function Portfolio() {
     <section
       id="work"
       aria-labelledby="work-heading"
-      className="border-y border-sand bg-white py-14 sm:py-20 lg:py-24"
+      className="border-y border-sand bg-white py-14 dark:border-white/10 dark:bg-[#1a1611] sm:py-20 lg:py-24"
     >
       <Container>
         <div className="mb-8 flex flex-col gap-6 lg:mb-10 lg:flex-row lg:items-end lg:justify-between">
@@ -55,7 +55,7 @@ export default function Portfolio() {
             >
               Portfolio
             </h2>
-            <p className="mt-3 max-w-[65ch] text-muted">
+            <p className="mt-3 max-w-[65ch] text-muted dark:text-white/60">
               A small edit across portraits, editorial, architecture, street,
               nature, and fine art. Use the filters to browse by series — tap
               the heart to save works to your favorites.
@@ -76,7 +76,7 @@ export default function Portfolio() {
           favoriteCount={favoriteCount}
         />
 
-        <p role="status" className="mb-6 text-sm text-muted">
+        <p role="status" className="mb-6 text-sm text-muted dark:text-white/60">
           {filteredWorks.length === 0 ? (
             isFavoritesView ? (
               "No saved works yet."
@@ -86,7 +86,7 @@ export default function Portfolio() {
           ) : (
             <>
               Showing{" "}
-              <strong className="font-semibold text-ink">
+              <strong className="font-semibold text-ink dark:text-cream">
                 {filteredWorks.length} of {isFavoritesView ? favoriteCount : WORKS.length}
               </strong>{" "}
               works — {activeLabel}.
@@ -95,14 +95,14 @@ export default function Portfolio() {
         </p>
 
         {filteredWorks.length === 0 && isFavoritesView ? (
-          <div className="flex flex-col items-center gap-3 rounded-2xl border-2 border-dashed border-sand bg-cream/60 px-6 py-14 text-center">
+          <div className="flex flex-col items-center gap-3 rounded-2xl border-2 border-dashed border-sand bg-cream/60 px-6 py-14 text-center dark:border-white/15 dark:bg-white/[0.03]">
             <span className="flex h-14 w-14 items-center justify-center rounded-full bg-rose-600/10 text-rose-500">
               <HeartIcon filled={false} size={26} />
             </span>
-            <p className="font-display text-2xl font-medium text-ink">
+            <p className="font-display text-2xl font-medium text-ink dark:text-cream">
               No favorites yet
             </p>
-            <p className="max-w-[42ch] text-sm text-muted">
+            <p className="max-w-[42ch] text-sm text-muted dark:text-white/60">
               Tap the heart on any photo to save it here — your picks are kept
               on this device, even after a refresh.
             </p>

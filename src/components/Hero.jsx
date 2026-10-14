@@ -16,7 +16,7 @@ export default function Hero() {
             >
               Light, form &amp; quiet moments.
             </h1>
-            <p className="mb-7 max-w-[65ch] text-lg text-muted">
+            <p className="mb-7 max-w-[65ch] text-lg text-muted dark:text-white/60">
               I&rsquo;m Bilal Ahmed. I photograph people, places, and the in-between —
               portraits and editorial stories told with natural light and a calm,
               minimal eye.
@@ -31,10 +31,10 @@ export default function Hero() {
               </Button>
             </div>
 
-            <dl className="flex flex-wrap gap-x-8 gap-y-4 border-t border-sand pt-5 sm:gap-x-12">
+            <dl className="flex flex-wrap gap-x-8 gap-y-4 border-t border-sand pt-5 dark:border-white/10 sm:gap-x-12">
               {HERO_STATS.map((stat) => (
                 <div key={stat.label} className="flex flex-col">
-                  <dt className="order-2 text-xs uppercase tracking-wider text-muted">
+                  <dt className="order-2 text-xs uppercase tracking-wider text-muted dark:text-white/55">
                     {stat.label}
                   </dt>
                   <dd className="order-1 font-display text-2xl leading-tight sm:text-3xl">
@@ -54,12 +54,12 @@ export default function Hero() {
               fetchPriority="high"
               className="aspect-[4/5] w-full rounded-[0.625rem] object-cover"
             />
-            <figcaption className="mt-2.5 text-sm text-muted">{HERO_IMAGE.caption}</figcaption>
+            <figcaption className="mt-2.5 text-sm text-muted dark:text-white/55">{HERO_IMAGE.caption}</figcaption>
           </figure>
         </div>
 
-        <div className="mt-10 flex flex-wrap items-center justify-center gap-x-9 gap-y-3 border-y border-sand py-5">
-          <span className="whitespace-nowrap text-[0.72rem] font-bold uppercase tracking-[0.24em] text-muted">
+        <div className="mt-10 flex flex-wrap items-center justify-center gap-x-9 gap-y-3 border-y border-sand py-5 dark:border-white/10">
+          <span className="whitespace-nowrap text-[0.72rem] font-bold uppercase tracking-[0.24em] text-muted dark:text-white/55">
             As featured in
           </span>
           <ul
@@ -71,7 +71,7 @@ export default function Hero() {
                 {index > 0 && (
                   <span
                     aria-hidden="true"
-                    className="mx-4 h-1.5 w-1.5 shrink-0 rounded-full bg-pine/50 sm:mx-7"
+                    className="mx-4 h-1.5 w-1.5 shrink-0 rounded-full bg-pine/50 dark:bg-emerald-300/50 sm:mx-7"
                   />
                 )}
                 {name}

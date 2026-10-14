@@ -6,7 +6,7 @@ export default function Footer() {
   const email = CONTACT_DETAILS.find((item) => item.type === "email");
 
   return (
-    <footer className="border-t border-white/10 bg-coal text-clay">
+    <footer className="border-t border-white/10 bg-coal text-clay dark:bg-[#100e0b]">
       <Container className="py-12 sm:py-14">
         <div className="grid gap-10 md:grid-cols-[1.5fr_1fr_1fr]">
           <div className="min-w-0">

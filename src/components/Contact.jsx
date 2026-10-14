@@ -115,14 +115,14 @@ function Field({ id, label, error, hint, icon, iconTop = false, children }) {
           </span>
         </label>
         {hint ? (
-          <span className="shrink-0 text-xs font-medium text-ink/45">{hint}</span>
+          <span className="shrink-0 text-xs font-medium text-ink/45 dark:text-white/45">{hint}</span>
         ) : null}
       </div>
       <div className="relative min-w-0">
         {icon ? (
           <span
             aria-hidden="true"
-            className={`pointer-events-none absolute left-3.5 text-ink/35 ${
+            className={`pointer-events-none absolute left-3.5 text-ink/35 dark:text-white/35 ${
               iconTop ? "top-3.5" : "top-1/2 -translate-y-1/2"
             }`}
           >
@@ -146,12 +146,12 @@ function Field({ id, label, error, hint, icon, iconTop = false, children }) {
 }
 
 const inputClass = (hasError, withIcon = false) =>
-  `w-full max-w-full rounded-xl border bg-cream/50 py-3 text-ink shadow-[inset_0_1px_2px_rgba(32,28,23,0.05)] outline-none transition placeholder:text-ink/35 focus:bg-white focus:ring-2 ${
+  `w-full max-w-full rounded-xl border bg-cream/50 py-3 text-ink shadow-[inset_0_1px_2px_rgba(32,28,23,0.05)] outline-none transition placeholder:text-ink/35 focus:bg-white focus:ring-2 dark:bg-white/5 dark:text-cream dark:shadow-none dark:placeholder:text-white/30 dark:focus:bg-white/10 ${
     withIcon ? "pl-10 pr-4" : "px-4"
   } ${
     hasError
       ? "border-error focus:border-error focus:ring-error/20"
-      : "border-sand hover:border-ink/30 focus:border-pine focus:ring-pine/25"
+      : "border-sand hover:border-ink/30 focus:border-pine focus:ring-pine/25 dark:border-white/10 dark:hover:border-white/25 dark:focus:border-emerald-300 dark:focus:ring-emerald-300/20"
   }`;
 
 export default function Contact() {
@@ -232,10 +232,10 @@ export default function Contact() {
   };
 
   return (
-    <section
+      <section
       id="contact"
       aria-labelledby="contact-heading"
-      className="relative overflow-hidden bg-coal py-14 text-[#f4efe7] sm:py-20 lg:py-24"
+      className="relative overflow-hidden bg-coal py-14 text-[#f4efe7] dark:bg-[#100e0b] sm:py-20 lg:py-24"
     >
       <div
         aria-hidden="true"
@@ -303,7 +303,7 @@ export default function Contact() {
         <form
           onSubmit={handleSubmit}
           noValidate
-          className="grid min-w-0 flex-1 gap-5 rounded-2xl bg-white p-5 text-ink shadow-2xl ring-1 ring-black/10 sm:p-7 lg:p-8 md:flex-[1.4]"
+          className="grid min-w-0 flex-1 gap-5 rounded-2xl bg-white p-5 text-ink shadow-2xl ring-1 ring-black/10 dark:bg-[#211c16] dark:text-cream dark:ring-white/10 sm:p-7 lg:p-8 md:flex-[1.4]"
         >
           <div className="grid min-w-0 gap-5 sm:grid-cols-2">
             <Field
@@ -360,7 +360,7 @@ export default function Contact() {
               onChange={handleChange}
               aria-invalid={Boolean(errors.projectType)}
               aria-describedby={errors.projectType ? "field-type-error" : undefined}
-              className={`${inputClass(errors.projectType, true)} appearance-none pr-10 ${values.projectType ? "" : "text-ink/35"}`}
+              className={`${inputClass(errors.projectType, true)} appearance-none pr-10 ${values.projectType ? "" : "text-ink/35 dark:text-white/30"}`}
             >
               <option value="">Select a project type</option>
               {PROJECT_TYPES.map((type) => (
@@ -371,7 +371,7 @@ export default function Contact() {
             </select>
             <span
               aria-hidden="true"
-              className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 text-ink/40"
+              className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 text-ink/40 dark:text-white/40"
             >
               <ChevronDownIcon />
             </span>
@@ -425,7 +425,7 @@ export default function Contact() {
                 Download a copy (.txt)
               </Button>
             </div>
-            <p className="text-xs text-ink/45">
+            <p className="text-xs text-ink/45 dark:text-white/45">
               {hasDraft
                 ? "Draft auto-saved on this device — safe to refresh."
                 : "Typically replies within two working days."}
@@ -437,8 +437,8 @@ export default function Contact() {
               aria-live="polite"
               className={`rounded-xl px-4 py-3 text-sm font-medium ${
                 status.type === "success"
-                  ? "bg-green-50 text-success ring-1 ring-green-600/20"
-                  : "bg-red-50 text-error ring-1 ring-red-600/20"
+                  ? "bg-green-50 text-success ring-1 ring-green-600/20 dark:bg-emerald-400/10 dark:text-emerald-300 dark:ring-emerald-300/20"
+                  : "bg-red-50 text-error ring-1 ring-red-600/20 dark:bg-red-400/10 dark:text-red-300 dark:ring-red-300/20"
               }`}
             >
               {status.message}

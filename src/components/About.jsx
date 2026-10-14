@@ -37,7 +37,7 @@ export default function About() {
           </p>
           <a
             href="#contact"
-            className="mt-6 inline-block font-semibold text-pine underline underline-offset-4"
+            className="mt-6 inline-block font-semibold text-pine underline underline-offset-4 dark:text-emerald-300"
           >
             Tell me about your project →
           </a>

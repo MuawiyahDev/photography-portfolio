@@ -13,8 +13,8 @@ function CategoryPill({ active, onClick, children, label }) {
       aria-label={label ?? (typeof children === "string" ? children : undefined)}
       className={`${pillBase} ${
         active
-          ? "border-coal bg-coal text-white"
-          : "border-sand bg-white text-muted hover:-translate-y-px hover:border-ink hover:text-ink"
+          ? "border-coal bg-coal text-white dark:border-cream dark:bg-cream dark:text-coal"
+          : "border-sand bg-white text-muted hover:-translate-y-px hover:border-ink hover:text-ink dark:border-white/10 dark:bg-white/5 dark:text-white/60 dark:hover:border-white/40 dark:hover:text-white"
       }`}
     >
       {children}
@@ -46,7 +46,7 @@ export default function FilterTabs({ active, onChange, favoriteCount }) {
         </CategoryPill>
       ))}
 
-      <span aria-hidden="true" className="hidden h-6 w-px bg-sand sm:block" />
+      <span aria-hidden="true" className="hidden h-6 w-px bg-sand dark:bg-white/10 sm:block" />
 
       <button
         type="button"
@@ -56,7 +56,7 @@ export default function FilterTabs({ active, onChange, favoriteCount }) {
         className={`${pillBase} ${
           favoritesActive
             ? "border-rose-600 bg-rose-600 text-white hover:bg-rose-500"
-            : "border-rose-200 bg-rose-50/60 text-rose-700 hover:-translate-y-px hover:border-rose-400 hover:text-rose-600"
+            : "border-rose-200 bg-rose-50/60 text-rose-700 hover:-translate-y-px hover:border-rose-400 hover:text-rose-600 dark:border-rose-400/30 dark:bg-rose-500/10 dark:text-rose-200 dark:hover:border-rose-300/50 dark:hover:text-rose-100"
         }`}
       >
         <HeartIcon filled={favoritesActive || favoriteCount > 0} size={14} />
@@ -65,7 +65,7 @@ export default function FilterTabs({ active, onChange, favoriteCount }) {
           className={`rounded-full px-1.5 py-0.5 text-xs font-bold leading-none ${
             favoritesActive
               ? "bg-white/25 text-white"
-              : "bg-rose-600/10 text-rose-700"
+              : "bg-rose-600/10 text-rose-700 dark:bg-rose-400/20 dark:text-rose-100"
           }`}
         >
           {favoriteCount}
