@@ -199,6 +199,7 @@ export default function Contact() {
   const messageLen = values.message.trim().length;
   const messageMet = messageLen >= MESSAGE_MIN;
   const hasDraft = Object.values(values).some((v) => v.trim().length > 0);
+  const isFormValid = Object.keys(validate(values)).length === 0;
 
   // No-API file save: downloads the inquiry as a .txt file. Note this
   // saves to the *visitor's* device — browsers cannot write files to
@@ -411,7 +412,15 @@ export default function Contact() {
               <Button
                 variant="ghost"
                 onClick={handleDownloadCopy}
-                title="Save this inquiry as a .txt file on your device"
+                disabled={!isFormValid}
+                title={
+                  isFormValid
+                    ? "Save this inquiry as a .txt file on your device"
+                    : "Fill in all fields correctly to download a copy"
+                }
+                className={
+                  isFormValid ? "" : "cursor-not-allowed opacity-50"
+                }
               >
                 Download a copy (.txt)
               </Button>
