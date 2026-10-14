@@ -1,11 +1,12 @@
 import { HERO_IMAGE, HERO_STATS, PRESS_LIST } from "../data/site.js";
 import Button from "./ui/Button.jsx";
+import Container from "./ui/Container.jsx";
 import Eyebrow from "./ui/Eyebrow.jsx";
 
 export default function Hero() {
   return (
     <section id="home" aria-labelledby="hero-heading" className="pb-8 pt-10 sm:pt-14 lg:pt-20">
-      <div className="mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8">
+      <Container>
         <div className="flex flex-col items-stretch gap-8 md:flex-row md:items-center lg:gap-16">
           <div className="min-w-0 flex-1">
             <Eyebrow>Photographer &amp; Visual Artist — Portland / Available worldwide</Eyebrow>
@@ -78,7 +79,7 @@ export default function Hero() {
             ))}
           </ul>
         </div>
-      </div>
+      </Container>
     </section>
   );
 }

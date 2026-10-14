@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { NAV_LINKS } from "../data/site.js";
 import Button from "./ui/Button.jsx";
+import Container from "./ui/Container.jsx";
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -22,7 +23,7 @@ export default function Header() {
       >
         Skip to content
       </a>
-      <div className="mx-auto flex h-[4.25rem] w-full max-w-6xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
+      <Container className="flex h-[4.25rem] items-center justify-between gap-4">
         <a
           href="#home"
           aria-label="Bilal Ahmed — home"
@@ -69,7 +70,7 @@ export default function Header() {
             id="nav-list"
             className={`${
               menuOpen ? "flex" : "hidden"
-            } absolute inset-x-0 top-[4.25rem] flex-col items-stretch gap-0 border-b border-sand bg-white px-4 pb-4 pt-2 md:static md:flex md:flex-row md:items-center md:gap-7 md:border-0 md:bg-transparent md:p-0`}
+            } absolute inset-x-0 top-[4.25rem] flex-col items-stretch gap-0 border-b border-sand bg-white px-4 pb-4 pt-2 sm:px-6 md:static md:flex md:flex-row md:items-center md:gap-7 md:border-0 md:bg-transparent md:p-0 lg:px-8`}
           >
             {NAV_LINKS.map((link) => (
               <li key={link.href} className="border-t border-sand first:border-0 md:border-0">
@@ -89,7 +90,7 @@ export default function Header() {
             </li>
           </ul>
         </nav>
-      </div>
+      </Container>
     </header>
   );
 }

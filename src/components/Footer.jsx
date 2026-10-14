@@ -1,11 +1,12 @@
 import { NAV_LINKS } from "../data/site.js";
+import Container from "./ui/Container.jsx";
 
 export default function Footer() {
   const year = new Date().getFullYear();
 
   return (
     <footer className="border-t border-white/10 bg-coal py-8 text-clay">
-      <div className="mx-auto flex w-full max-w-6xl flex-wrap items-center justify-between gap-x-8 gap-y-4 px-4 sm:px-6 lg:px-8">
+      <Container className="flex flex-wrap items-center justify-between gap-x-8 gap-y-4">
         <p className="font-display text-lg text-white">
           Bilal Ahmed
           <span className="ml-2 font-sans text-xs uppercase tracking-[0.2em] text-clay">
@@ -29,7 +30,7 @@ export default function Footer() {
         <p className="basis-full text-sm">
           © {year} Bilal Ahmed. All photographs by the artist.
         </p>
-      </div>
+      </Container>
     </footer>
   );
 }

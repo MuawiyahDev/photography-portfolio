@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { CATEGORIES, WORKS } from "../data/works.js";
 import Button from "./ui/Button.jsx";
+import Container from "./ui/Container.jsx";
 import Eyebrow from "./ui/Eyebrow.jsx";
 import GalleryCard from "./GalleryCard.jsx";
 
@@ -26,7 +27,7 @@ export default function Portfolio() {
       aria-labelledby="work-heading"
       className="border-y border-sand bg-white py-14 sm:py-20"
     >
-      <div className="mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8">
+      <Container>
         <div className="mb-8 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
           <div className="min-w-0">
             <Eyebrow>Selected work 2019–2026</Eyebrow>
@@ -78,7 +79,7 @@ export default function Portfolio() {
             <GalleryCard key={work.id} work={work} />
           ))}
         </div>
-      </div>
+      </Container>
     </section>
   );
 }

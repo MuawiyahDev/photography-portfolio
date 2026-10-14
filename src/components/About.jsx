@@ -1,10 +1,11 @@
 import { ABOUT_IMAGE } from "../data/site.js";
+import Container from "./ui/Container.jsx";
 import Eyebrow from "./ui/Eyebrow.jsx";
 
 export default function About() {
   return (
     <section id="about" aria-labelledby="about-heading" className="py-14 sm:py-20">
-      <div className="mx-auto flex w-full max-w-6xl flex-col items-stretch gap-8 px-4 sm:px-6 md:flex-row md:items-center lg:gap-16 lg:px-8">
+      <Container className="flex flex-col items-stretch gap-8 md:flex-row md:items-center lg:gap-16">
         <figure className="m-0 min-w-0 shrink-0 md:basis-80 lg:basis-96">
           <img
             src={ABOUT_IMAGE.src}
@@ -41,7 +42,7 @@ export default function About() {
             Tell me about your project →
           </a>
         </div>
-      </div>
+      </Container>
     </section>
   );
 }

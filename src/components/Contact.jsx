@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { CONTACT_DETAILS, PROJECT_TYPES } from "../data/site.js";
+import Container from "./ui/Container.jsx";
 import Eyebrow from "./ui/Eyebrow.jsx";
 
 const INITIAL_VALUES = { name: "", email: "", projectType: "", message: "" };
@@ -85,7 +86,7 @@ export default function Contact() {
       aria-labelledby="contact-heading"
       className="bg-coal py-14 text-[#f4efe7] sm:py-20"
     >
-      <div className="mx-auto flex w-full max-w-6xl flex-col items-stretch gap-8 px-4 sm:px-6 md:flex-row md:items-start lg:gap-16 lg:px-8">
+      <Container className="flex flex-col items-stretch gap-8 md:flex-row md:items-start lg:gap-16">
         <div className="min-w-0 flex-1">
           <Eyebrow tone="dark">Contact — bookings open for 2026</Eyebrow>
           <h2
@@ -214,7 +215,7 @@ export default function Contact() {
             {status.message}
           </p>
         </form>
-      </div>
+      </Container>
     </section>
   );
 }
