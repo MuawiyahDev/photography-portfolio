@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { CONTACT_DETAILS, PROJECT_TYPES } from "../data/site.js";
 import useLocalStorage from "../hooks/useLocalStorage.js";
+import Button from "./ui/Button.jsx";
 import Container from "./ui/Container.jsx";
 import Eyebrow from "./ui/Eyebrow.jsx";
 
@@ -199,6 +200,36 @@ export default function Contact() {
   const messageMet = messageLen >= MESSAGE_MIN;
   const hasDraft = Object.values(values).some((v) => v.trim().length > 0);
 
+  // No-API file save: downloads the inquiry as a .txt file. Note this
+  // saves to the *visitor's* device — browsers cannot write files to
+  // the site owner's computer without a backend or email service.
+  const handleDownloadCopy = () => {
+    const projectLabel =
+      PROJECT_TYPES.find((t) => t.value === values.projectType)?.label ??
+      "—";
+    const text = [
+      "New inquiry — Bilal Ahmed Photography",
+      `Date: ${new Date().toLocaleString()}`,
+      "",
+      `Name: ${values.name.trim() || "—"}`,
+      `Email: ${values.email.trim() || "—"}`,
+      `Project type: ${projectLabel}`,
+      "",
+      "Message:",
+      values.message.trim() || "—",
+    ].join("\n");
+    const url = URL.createObjectURL(
+      new Blob([text], { type: "text/plain;charset=utf-8" }),
+    );
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `inquiry-${new Date().toISOString().slice(0, 10)}.txt`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <section
       id="contact"
@@ -369,13 +400,22 @@ export default function Contact() {
           </Field>
 
           <div className="grid gap-2.5">
-            <button
-              type="submit"
-              className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-pine px-6 py-3.5 font-semibold text-white shadow-lg shadow-pine/25 transition-all hover:bg-pine-dark active:scale-[0.98] sm:w-auto sm:justify-self-start"
-            >
-              Send Inquiry
-              <span aria-hidden="true">→</span>
-            </button>
+            <div className="flex flex-col gap-2.5 sm:flex-row sm:flex-wrap">
+              <button
+                type="submit"
+                className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-pine px-6 py-3.5 font-semibold text-white shadow-lg shadow-pine/25 transition-all hover:bg-pine-dark active:scale-[0.98] sm:w-auto"
+              >
+                Send Inquiry
+                <span aria-hidden="true">→</span>
+              </button>
+              <Button
+                variant="ghost"
+                onClick={handleDownloadCopy}
+                title="Save this inquiry as a .txt file on your device"
+              >
+                Download a copy (.txt)
+              </Button>
+            </div>
             <p className="text-xs text-ink/45">
               {hasDraft
                 ? "Draft auto-saved on this device — safe to refresh."
