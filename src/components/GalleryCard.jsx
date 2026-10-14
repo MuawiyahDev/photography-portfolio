@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { CATEGORY_LABELS } from "../data/works.js";
 import HeartIcon from "./ui/HeartIcon.jsx";
 import StarRating from "./StarRating.jsx";
@@ -8,12 +7,17 @@ import StarRating from "./StarRating.jsx";
  * portrait, and landscape photos all render fully — never cropped,
  * never stretched. Used inside a CSS-columns masonry grid.
  *
- * `liked` / `onToggleLike` are controlled by the parent (persisted
- * favorites live in `useFavorites`, not in local card state).
+ * `liked` / `onToggleLike` and `rating` / `onRate` are controlled by the
+ * parent (persisted favorites + ratings live in localStorage, not in
+ * local card state, so both survive a refresh).
  */
-export default function GalleryCard({ work, liked = false, onToggleLike }) {
-  const [rating, setRating] = useState(0);
-
+export default function GalleryCard({
+  work,
+  liked = false,
+  onToggleLike,
+  rating = 0,
+  onRate,
+}) {
   return (
     <figure className="group relative mb-5 min-w-0 break-inside-avoid overflow-hidden rounded-xl bg-sand shadow-sm ring-1 ring-black/5 transition-shadow duration-300 hover:shadow-xl">
       <img
@@ -51,7 +55,7 @@ export default function GalleryCard({ work, liked = false, onToggleLike }) {
         </strong>
         <StarRating
           value={rating}
-          onChange={setRating}
+          onChange={(next) => onRate?.(work.id, next)}
           size="sm"
           label={`Rate ${work.title}`}
         />

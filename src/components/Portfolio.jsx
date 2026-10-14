@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { CATEGORIES, WORKS } from "../data/works.js";
 import useFavorites from "../hooks/useFavorites.js";
+import useLocalStorage from "../hooks/useLocalStorage.js";
 import Button from "./ui/Button.jsx";
 import Container from "./ui/Container.jsx";
 import Eyebrow from "./ui/Eyebrow.jsx";
@@ -12,6 +13,13 @@ export default function Portfolio() {
   const [activeFilter, setActiveFilter] = useState("all");
   const { favorites, favoriteCount, toggleFavorite, isFavorite } =
     useFavorites();
+  const [ratings, setRatings] = useLocalStorage(
+    "bilal-ahmed-portfolio:ratings:v1",
+    {},
+  );
+
+  const handleRate = (id, next) =>
+    setRatings((prev) => ({ ...prev, [id]: next }));
 
   const isFavoritesView = activeFilter === "favorites";
 
@@ -114,6 +122,8 @@ export default function Portfolio() {
                 work={work}
                 liked={isFavorite(work.id)}
                 onToggleLike={toggleFavorite}
+                rating={ratings[work.id] ?? 0}
+                onRate={handleRate}
               />
             ))}
           </div>
