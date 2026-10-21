@@ -1,7 +1,7 @@
-import { useMemo, useState } from "react";
-import { CATEGORIES, WORKS } from "../data/works.js";
-import useFavorites from "../hooks/useFavorites.js";
-import useLocalStorage from "../hooks/useLocalStorage.js";
+"use client";
+
+import { useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import Button from "./ui/Button.jsx";
 import Container from "./ui/Container.jsx";
 import Eyebrow from "./ui/Eyebrow.jsx";
@@ -9,34 +9,147 @@ import FilterTabs from "./FilterTabs.jsx";
 import GalleryCard from "./GalleryCard.jsx";
 import HeartIcon from "./ui/HeartIcon.jsx";
 
-export default function Portfolio() {
+export default function Portfolio({
+  works,
+  categories = [],
+  initialFavorites = [],
+  initialRatings = {},
+  signedIn = false,
+}) {
+  const router = useRouter();
   const [activeFilter, setActiveFilter] = useState("all");
-  const { favorites, favoriteCount, toggleFavorite, isFavorite } =
-    useFavorites();
-  const [ratings, setRatings] = useLocalStorage(
-    "bilal-ahmed-portfolio:ratings:v1",
-    {},
-  );
 
-  const handleRate = (id, next) =>
-    setRatings((prev) => ({ ...prev, [id]: next }));
+  // Favorites and ratings live in PostgreSQL, read on the server and
+  // passed down (along with `signedIn`, so heart/star clicks never
+  // wait on a client-side session fetch — the first click works).
+  const [favorites, setFavorites] = useState(initialFavorites);
+  const [ratings, setRatings] = useState(initialRatings);
+  // Slugs with a request in flight — their hearts show a spinner.
+  const [pending, setPending] = useState(() => new Set());
+
+  // Re-sync when the server re-renders the page (e.g. after login/logout).
+  useEffect(() => {
+    setFavorites(initialFavorites);
+    setRatings(initialRatings);
+  }, [initialFavorites, initialRatings]);
+
+  const favoriteCount = favorites.length;
+
+  const setPendingSlug = (id, on) =>
+    setPending((prev) => {
+      const next = new Set(prev);
+      if (on) next.add(id);
+      else next.delete(id);
+      return next;
+    });
+
+  const handleToggleFavorite = async (id) => {
+    // This heart is already syncing — its spinner shows that.
+    if (pending.has(id)) return;
+
+    // Favorites belong to an account — go sign in.
+    if (!signedIn) {
+      router.push("/login");
+      return;
+    }
+
+    // Optimistic update: flip the heart immediately…
+    const previous = favorites;
+    const willBeFavorite = !previous.includes(id);
+    setFavorites(
+      willBeFavorite
+        ? [...previous, id]
+        : previous.filter((fav) => fav !== id),
+    );
+    setPendingSlug(id, true);
+
+    try {
+      const response = await fetch("/api/favorites", {
+        method: willBeFavorite ? "POST" : "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ slug: id }),
+      });
+
+      if (response.ok) {
+        // …then trust the server's answer as the final state.
+        const data = await response.json();
+        setFavorites((prev) =>
+          data.favorited
+            ? prev.includes(id)
+              ? prev
+              : [...prev, id]
+            : prev.filter((fav) => fav !== id),
+        );
+      } else {
+        setFavorites(previous); // roll back the optimistic update
+        // Session expired mid-click → send them to login.
+        if (response.status === 401) router.push("/login");
+      }
+    } catch {
+      setFavorites(previous); // network error → roll back
+    } finally {
+      setPendingSlug(id, false);
+    }
+  };
+
+  const handleRate = async (id, next) => {
+    // Ratings belong to an account — same rule as the wishlist hearts.
+    if (!signedIn) {
+      router.push("/login");
+      return;
+    }
+
+    // Optimistic update: move the stars immediately…
+    const previous = ratings;
+    setRatings((prev) => {
+      const updated = { ...prev };
+      if (next === 0) delete updated[id];
+      else updated[id] = next;
+      return updated;
+    });
+
+    try {
+      const response = await fetch("/api/ratings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ slug: id, value: next }),
+      });
+
+      if (response.ok) {
+        // …then trust the server's answer as the final state.
+        const data = await response.json();
+        setRatings((prev) => {
+          const updated = { ...prev };
+          if (data.value === 0) delete updated[data.slug];
+          else updated[data.slug] = data.value;
+          return updated;
+        });
+      } else {
+        setRatings(previous); // roll back the optimistic update
+        // Session expired mid-click → send them to login.
+        if (response.status === 401) router.push("/login");
+      }
+    } catch {
+      setRatings(previous); // network error → roll back
+    }
+  };
 
   const isFavoritesView = activeFilter === "favorites";
 
   const filteredWorks = useMemo(() => {
     if (isFavoritesView) {
-      return WORKS.filter((work) => favorites.includes(work.id));
+      return works.filter((work) => favorites.includes(work.id));
     }
     return activeFilter === "all"
-      ? WORKS
-      : WORKS.filter((work) => work.category === activeFilter);
-  }, [activeFilter, isFavoritesView, favorites]);
+      ? works
+      : works.filter((work) => work.category === activeFilter);
+  }, [activeFilter, isFavoritesView, favorites, works]);
 
   const activeLabel = isFavoritesView
     ? "favorites"
     : activeFilter === "all"
       ? "all"
-      : (CATEGORIES.find((c) => c.value === activeFilter)?.label ??
+      : (categories.find((c) => c.slug === activeFilter)?.label ??
         activeFilter);
 
   return (
@@ -62,7 +175,7 @@ export default function Portfolio() {
             </p>
           </div>
           <Button
-            href="#contact"
+            href="/#contact"
             variant="ghost"
             className="shrink-0 self-start lg:self-auto"
           >
@@ -71,6 +184,7 @@ export default function Portfolio() {
         </div>
 
         <FilterTabs
+          categories={categories}
           active={activeFilter}
           onChange={setActiveFilter}
           favoriteCount={favoriteCount}
@@ -87,7 +201,7 @@ export default function Portfolio() {
             <>
               Showing{" "}
               <strong className="font-semibold text-ink dark:text-cream">
-                {filteredWorks.length} of {isFavoritesView ? favoriteCount : WORKS.length}
+                {filteredWorks.length} of {isFavoritesView ? favoriteCount : works.length}
               </strong>{" "}
               works — {activeLabel}.
             </>
@@ -103,16 +217,27 @@ export default function Portfolio() {
               No favorites yet
             </p>
             <p className="max-w-[42ch] text-sm text-muted dark:text-white/60">
-              Tap the heart on any photo to save it here — your picks are kept
-              on this device, even after a refresh.
+              {!signedIn
+                ? "Sign in to save your favorite works — they stay with your account on any device."
+                : "Tap the heart on any photo to save it here — your picks are saved to your account and follow you on any device."}
             </p>
-            <Button
-              variant="primary"
-              onClick={() => setActiveFilter("all")}
-              className="mt-2"
-            >
-              Browse all works
-            </Button>
+            {!signedIn ? (
+              <Button
+                variant="primary"
+                onClick={() => router.push("/login")}
+                className="mt-2"
+              >
+                Sign in to save favorites
+              </Button>
+            ) : (
+              <Button
+                variant="primary"
+                onClick={() => setActiveFilter("all")}
+                className="mt-2"
+              >
+                Browse all works
+              </Button>
+            )}
           </div>
         ) : (
           <div className="columns-1 gap-5 sm:columns-2 lg:columns-3 xl:columns-4">
@@ -120,8 +245,9 @@ export default function Portfolio() {
               <GalleryCard
                 key={work.id}
                 work={work}
-                liked={isFavorite(work.id)}
-                onToggleLike={toggleFavorite}
+                liked={favorites.includes(work.id)}
+                onToggleLike={handleToggleFavorite}
+                busy={pending.has(work.id)}
                 rating={ratings[work.id] ?? 0}
                 onRate={handleRate}
               />

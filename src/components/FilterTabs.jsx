@@ -1,4 +1,3 @@
-import { CATEGORIES } from "../data/works.js";
 import HeartIcon from "./ui/HeartIcon.jsx";
 
 const pillBase =
@@ -23,12 +22,22 @@ function CategoryPill({ active, onClick, children, label }) {
 }
 
 /**
- * Portfolio filter tabs — category pills plus a dedicated Favorites
- * tab with a live count badge. Mobile-first: wraps cleanly, never
- * causes page-level horizontal scroll.
+ * Portfolio filter tabs — category pills (from the database) plus a
+ * dedicated Favorites tab with a live count badge. Mobile-first:
+ * wraps cleanly, never causes page-level horizontal scroll.
  */
-export default function FilterTabs({ active, onChange, favoriteCount }) {
+export default function FilterTabs({
+  categories = [],
+  active,
+  onChange,
+  favoriteCount,
+}) {
   const favoritesActive = active === "favorites";
+  // "All" is a view, not a stored category — it always leads the row.
+  const tabs = [
+    { slug: "all", label: "All" },
+    ...categories.map((c) => ({ slug: c.slug, label: c.label })),
+  ];
 
   return (
     <div
@@ -36,13 +45,13 @@ export default function FilterTabs({ active, onChange, favoriteCount }) {
       aria-label="Filter gallery by category"
       className="mb-3 flex flex-wrap items-center gap-2"
     >
-      {CATEGORIES.map((category) => (
+      {tabs.map((tab) => (
         <CategoryPill
-          key={category.value}
-          active={category.value === active}
-          onClick={() => onChange(category.value)}
+          key={tab.slug}
+          active={tab.slug === active}
+          onClick={() => onChange(tab.slug)}
         >
-          {category.label}
+          {tab.label}
         </CategoryPill>
       ))}
 
