@@ -3,101 +3,190 @@ marp: true
 theme: default
 paginate: true
 header: "Photography Portfolio — Bilal Ahmed"
-footer: "React · Vite · Tailwind CSS"
+footer: "Next.js · Prisma · PostgreSQL · Auth.js"
 ---
 
 # Photography Portfolio
-## A website for photographer Bilal Ahmed
+## A website for photographer Bilal Ahmed — now with a real backend
 
-Rebuilt from plain static files into a modern React app.
+Assignment 3: database, API, authentication, and going live.
 
 ---
 
 ## What this project is
 
-Bilal Ahmed is a photographer. He needed a website to show his work — portraits, street shots, buildings, nature, and fine art — and a way for clients to contact him and book a shoot.
+Bilal Ahmed is a photographer. He needs a website that shows his work —
+portraits, street, buildings, nature, fine art — and lets clients contact
+him and book shoots.
 
-The old site was plain HTML, CSS, and JavaScript files. I rebuilt it with React, Vite, and Tailwind CSS so the code is cleaner, easier to change, and nicer to use.
+It started as plain HTML/CSS/JS, then became a React + Vite site.
+This week it grew a real backend: a database, a working API, real login,
+and a private dashboard to manage everything.
 
-**In short:** 10 photos · 8 browsing tabs · contact form · no server needed.
+**In short:** a public gallery + a CMS dashboard, one Next.js app,
+one PostgreSQL database.
 
 ---
 
 ## What it is built with
 
-- **React** — builds the page out of small reusable pieces
-- **Vite** — the tool that runs and packages the site
+- **Next.js 15 (React 19)** — pages *and* API routes in one app
 - **Tailwind CSS** — styling with ready-made classes
-- **Browser storage** — remembers likes, ratings, and form drafts
-- **No backend** — the finished site is just static files
+- **Prisma** — defines the database schema, runs migrations, seeds data
+- **PostgreSQL on Neon** — the free hosted database
+- **Auth.js (NextAuth v5)** — signup, login, signed session cookies
+- **Zod** — checks every API input before it touches the database
+- **No TypeScript** — plain JavaScript throughout, as required
+
+---
+
+## Why Next.js (instead of Express)
+
+The assignment allows Express *or* Next.js. I chose Next.js because:
+
+- Frontend and API live in **one app** — no split client/server folders,
+  one deploy instead of two
+- API routes are just files: `app/api/works/route.js` → `GET /api/works`
+- Pages can read the database directly on the server (fast, SEO-friendly),
+  and client interactions (likes, forms, dashboard) go through the API
 
 ---
 
 ## How the code is organized
 
 ```
+app/
+├── (site)/           → public pages: home, login, register
+├── admin/            → dashboard: works, categories, hero,
+│                       about, contact, users
+└── api/              → JSON routes (works, favorites,
+                        inquiries, categories, auth, admin/*)
+
 src/
-├── App.jsx            → puts all sections together
-├── data/              → all texts and photos in one place
-├── hooks/             → remembers likes, stars, drafts
-└── components/        → header, hero, gallery, about,
-                         contact form, footer + small
-                         reusable pieces (buttons, stars…)
+├── components/       → UI pieces (gallery, header, ui kit…)
+├── lib/              → prisma, auth guard, validation,
+│                       data access helpers
+└── data/             → seed source for the database
+
+prisma/
+├── schema.prisma     → the database schema
+├── seed.js           → fills the database with the old hardcoded data
+└── migrations/       → version history of the schema
 ```
 
-Each part of the page is its own piece. Change one piece, nothing else breaks.
+---
+
+## The database (6 tables, plain English)
+
+- **User** — an account: name, email, password *hash*, role
+  (`ADMIN` can manage the site, `USER` cannot)
+- **Work** — one photo in the gallery: title, category, image URL,
+  size, alt text
+- **Category** — a filter tab (Portraits, Street…): label, slug, order
+- **Favorite** — "user X saved work Y" — one row per heart
+- **Inquiry** — a message sent through the contact form
+- **SiteSetting** — editable page content (hero, about, contact text)
+
+Every table was created with `prisma migrate` — the schema lives in
+`prisma/schema.prisma` and migrations record each change.
 
 ---
 
-## One list drives the whole gallery
+## From hardcoded files to real data
 
-Instead of copying the same photo code ten times, every photo lives in a single list:
+Week 2 data moved into the database with one command:
 
-```js
-{ id: "theo-daylight", title: "Theo, in daylight",
-  category: "portraits",
-  src: "https://images.unsplash.com/photo-…" }
+```
+npm run db:seed
 ```
 
-The page simply loops over the list and draws a card per photo. To add a new photo, you add one entry — that's it.
+The seed script reads the old photo list in `src/data/works.js` and
+**inserts it into Neon** (it's idempotent — running it twice never
+duplicates anything). Categories and the admin account are seeded too.
+
+After seeding, the site never reads the hardcoded list again — every
+photo, tab, and text on the page comes from PostgreSQL.
 
 ---
 
-## Browsing the gallery
+## The API
 
-- **Filter tabs** — All, Portraits, Editorial, Architecture, Street, Nature, Fine Art, plus Favorites
-- **Hearts** — tap to save a photo; the count badge on the Favorites tab updates live
-- **Stars** — rate any photo from 1 to 5, with a preview as you hover
-- **Empty state** — if you have no favorites yet, the page explains what to do instead of showing a blank box
+**Public JSON routes** (anyone):
+- `GET /api/works` — all photos as JSON
+- `GET /api/categories` — the gallery tabs
+- `POST /api/inquiries` — contact form submissions
+- `POST /api/favorites` — save/remove a heart (sign-in required)
 
----
+**Dashboard routes** (`/api/admin/*`):
+- create/update/delete works, categories, page settings, users
 
-## It remembers things after refresh
-
-- **Favorites** — saved hearts stay even if you close and reopen the page
-- **Star ratings** — your ratings stay too
-- **Contact draft** — half-written messages are auto-saved, so nothing is lost on refresh
-- **Download a copy** — visitors can save their inquiry as a `.txt` file (only enabled once the form is filled in correctly)
-
-One honest note: a website alone can't send messages to the owner's inbox — that part needs an email service. Everything else works with no server at all.
+Security on every admin route: **401** if not signed in,
+**403** if signed in but not an admin. Every input is checked with Zod
+before the database is touched.
 
 ---
 
-## Looks good on every screen
+## Real authentication
 
-- The gallery is a masonry layout: each photo keeps its natural shape, so nothing gets cropped — square, tall, or wide
-- Layout grows step by step: 1 column on phones, up to 4 on big screens
-- Photo captions are always readable on touch screens; zoom-on-hover is just a bonus on desktop
-- Dark and light appearance follow the device setting automatically — no switch needed
-- Nothing scrolls sideways on any screen size
+- **Signup** → `POST /api/auth/register` hashes the password with
+  bcrypt and stores the user — the plain password is never saved
+- **Login** → Auth.js verifies the hash, then signs a **session cookie**
+- The session is a signed JWT, so it **survives page refresh** and
+  works across serverless functions
+- The header reacts to the session: **Sign in / Sign up** when logged
+  out, **name + Dashboard + Sign out** when logged in
+- Visiting `/login` while signed in redirects you away automatically
+
+---
+
+## The admin dashboard (the CMS)
+
+A private area at `/admin`, only reachable by the `ADMIN` role:
+
+- **Portfolio** — add, edit, delete photos (with live image preview)
+- **Categories** — create/rename/reorder the gallery filter tabs;
+  can't delete a tab that photos still use
+- **Hero / About / Contact** — edit the public page text, images, and
+  buttons — changes appear on the site immediately
+- **Users** — list accounts, promote/demote admins, remove users
+- **Inquiries** — read the messages sent through the contact form
+
+Everything a non-coder would need — no more editing source files.
+
+---
+
+## The public site (what visitors see)
+
+- **Gallery tabs come from the database** — add a category in the
+  dashboard and it appears as a tab instantly
+- **Hearts and stars both live in the database** — favorites *and*
+  ratings are tied to your account, so they survive a new device;
+  rating or saving asks you to sign in first, exactly like the wishlist
+- **Contact form** — validated, saved to the database as an Inquiry,
+  and shown in the dashboard; a copy can be downloaded as `.txt`
+- Dark/light mode follows the device; layout works from phone to
+  4-column desktop
+
+---
+
+## Secrets and git
+
+- **`.env`** holds `DATABASE_URL`, `AUTH_SECRET`, and admin credentials
+- `.gitignore` blocks it — `git check-ignore .env` confirms it's
+  **never committed**
+- `.env.example` is committed as a template with empty values
+- Nothing secret ever reaches the browser: `AUTH_SECRET` and the
+  database URL are used only on the server
 
 ---
 
 ## What's next
 
-1. Connect the form to an email service so inquiries reach the inbox
-2. Host the photos locally in modern formats so they load faster
-3. Add automated tests for the filters and the form
-4. Put the site online (it builds to plain static files, so hosting is free)
+1. **Deploy to Vercel** — connect the repo, add the `.env` variables,
+   and the whole app (site + API) goes live on one public URL
+2. Push the finished code to GitHub and share the link with the
+   instructor
+3. Optional: email forwarding for inquiries, local image hosting,
+   automated tests
 
 Thank you — questions?
