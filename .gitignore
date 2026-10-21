@@ -1,9 +1,20 @@
 # dependencies
 node_modules/
 
+# env files (secrets) — .env.example stays committed as a template
+.env
+.env.*
+!.env.example
+
+# prisma generated client
+/src/generated/
+
 # build output
 dist/
 dist-ssr/
+.next/
+.next-verify/
+out/
 
 # logs
 *.log
