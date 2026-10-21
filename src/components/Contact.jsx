@@ -1,5 +1,7 @@
+"use client";
+
 import { useState } from "react";
-import { CONTACT_DETAILS, PROJECT_TYPES } from "../data/site.js";
+import { PROJECT_TYPES } from "../data/site.js";
 import useLocalStorage from "../hooks/useLocalStorage.js";
 import Button from "./ui/Button.jsx";
 import Container from "./ui/Container.jsx";
@@ -154,7 +156,7 @@ const inputClass = (hasError, withIcon = false) =>
       : "border-sand hover:border-ink/30 focus:border-pine focus:ring-pine/25 dark:border-white/10 dark:hover:border-white/25 dark:focus:border-emerald-300 dark:focus:ring-emerald-300/20"
   }`;
 
-export default function Contact() {
+export default function Contact({ content }) {
   // Draft autosave: typed text survives a refresh on this device.
   // (Delivery still needs a backend or form-to-email service — see notes.)
   const [values, setValues] = useLocalStorage(
@@ -163,6 +165,7 @@ export default function Contact() {
   );
   const [errors, setErrors] = useState({});
   const [status, setStatus] = useState({ type: "", message: "" });
+  const [submitting, setSubmitting] = useState(false);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -175,7 +178,7 @@ export default function Contact() {
     });
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     const nextErrors = validate(values);
     setErrors(nextErrors);
@@ -188,12 +191,45 @@ export default function Contact() {
       return;
     }
 
-    const firstName = values.name.trim();
-    setStatus({
-      type: "success",
-      message: `Thank you, ${firstName}. Your inquiry was received — I’ll reply within two working days.`,
-    });
-    setValues(INITIAL_VALUES);
+    // Save the inquiry to PostgreSQL through the API.
+    setSubmitting(true);
+    setStatus({ type: "", message: "" });
+    try {
+      const response = await fetch("/api/inquiries", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: values.name.trim(),
+          email: values.email.trim(),
+          projectType: values.projectType,
+          message: values.message.trim(),
+        }),
+      });
+
+      if (!response.ok) {
+        const data = await response.json().catch(() => ({}));
+        setStatus({
+          type: "error",
+          message:
+            data.error ?? "Something went wrong. Please try again later.",
+        });
+        return;
+      }
+
+      const firstName = values.name.trim();
+      setStatus({
+        type: "success",
+        message: `Thank you, ${firstName}. Your inquiry was received — I’ll reply within two working days.`,
+      });
+      setValues(INITIAL_VALUES);
+    } catch {
+      setStatus({
+        type: "error",
+        message: "Network error — please check your connection and try again.",
+      });
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const messageLen = values.message.trim().length;
@@ -248,20 +284,17 @@ export default function Contact() {
 
       <Container className="relative flex flex-col items-stretch gap-10 md:flex-row md:items-start lg:gap-16">
         <div className="min-w-0 flex-1">
-          <Eyebrow tone="dark">Contact — bookings open for 2026</Eyebrow>
+          <Eyebrow tone="dark">{content.eyebrow}</Eyebrow>
           <h2
             id="contact-heading"
             className="font-display text-3xl font-medium tracking-tight sm:text-4xl lg:text-5xl"
           >
-            Book a Shoot
+            {content.heading}
           </h2>
-          <p className="mt-3 max-w-[65ch] text-clay">
-            Portraits, weddings, editorial assignments, and commissions. Share a
-            few details and I&rsquo;ll reply within two working days.
-          </p>
+          <p className="mt-3 max-w-[65ch] text-clay">{content.blurb}</p>
 
           <ul className="mt-8 grid gap-3">
-            {CONTACT_DETAILS.map((item) => {
+            {content.details.map((item) => {
               const Icon = ICONS[item.type] ?? PinIcon;
               return (
                 <li
@@ -290,6 +323,23 @@ export default function Contact() {
               );
             })}
           </ul>
+
+          {content.socials?.length > 0 && (
+            <ul className="mt-5 flex flex-wrap gap-3" aria-label="Social media">
+              {content.socials.map((social) => (
+                <li key={social.label}>
+                  <a
+                    href={social.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center rounded-full border border-white/15 bg-white/[0.04] px-4 py-2 text-xs font-semibold text-clay transition-colors hover:border-white/30 hover:text-white"
+                  >
+                    {social.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          )}
 
           <p className="mt-6 inline-flex items-center gap-2.5 rounded-full border border-white/15 bg-white/[0.04] px-4 py-2 text-xs font-medium text-clay">
             <span className="relative flex h-2 w-2">
@@ -404,9 +454,10 @@ export default function Contact() {
             <div className="flex flex-col gap-2.5 sm:flex-row sm:flex-wrap">
               <button
                 type="submit"
-                className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-pine px-6 py-3.5 font-semibold text-white shadow-lg shadow-pine/25 transition-all hover:bg-pine-dark active:scale-[0.98] sm:w-auto"
+                disabled={submitting}
+                className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-pine px-6 py-3.5 font-semibold text-white shadow-lg shadow-pine/25 transition-all hover:bg-pine-dark active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
               >
-                Send Inquiry
+                {submitting ? "Sending…" : "Send Inquiry"}
                 <span aria-hidden="true">→</span>
               </button>
               <Button

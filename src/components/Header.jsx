@@ -1,5 +1,8 @@
+"use client";
+
 import { useEffect, useState } from "react";
 import { NAV_LINKS } from "../data/site.js";
+import AuthNav from "./AuthNav.jsx";
 import Button from "./ui/Button.jsx";
 import Container from "./ui/Container.jsx";
 
@@ -25,7 +28,7 @@ export default function Header() {
       </a>
       <Container className="flex h-[4.25rem] items-center justify-between gap-4">
         <a
-          href="#home"
+          href="/#home"
           aria-label="Bilal Ahmed — home"
           className="flex min-w-0 items-center gap-2.5 font-display text-lg text-ink no-underline dark:text-cream"
         >
@@ -83,8 +86,11 @@ export default function Header() {
                 </a>
               </li>
             ))}
+            <li className="border-t border-sand first:border-0 dark:border-white/10 md:border-0">
+              <AuthNav />
+            </li>
             <li className="pt-3 md:pt-0">
-              <Button href="#contact" variant="dark" size="sm" className="w-full md:w-auto">
+              <Button href="/#contact" variant="dark" size="sm" className="w-full md:w-auto">
                 Book a Shoot
               </Button>
             </li>

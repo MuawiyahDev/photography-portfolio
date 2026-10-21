@@ -1,9 +1,9 @@
-import { CONTACT_DETAILS, NAV_LINKS } from "../data/site.js";
+import { NAV_LINKS } from "../data/site.js";
 import Container from "./ui/Container.jsx";
 
-export default function Footer() {
+export default function Footer({ contact }) {
   const year = new Date().getFullYear();
-  const email = CONTACT_DETAILS.find((item) => item.type === "email");
+  const email = contact?.details?.find((item) => item.type === "email");
 
   return (
     <footer className="border-t border-white/10 bg-coal text-clay dark:bg-[#100e0b]">
@@ -61,8 +61,9 @@ export default function Footer() {
               Studio
             </p>
             <ul className="mt-4 grid gap-2.5 text-sm">
-              {CONTACT_DETAILS.filter((item) => item.type !== "email").map(
-                (item) => (
+              {(contact?.details ?? [])
+                .filter((item) => item.type !== "email")
+                .map((item) => (
                   <li key={item.label} className="min-w-0">
                     <span className="block text-[0.7rem] font-bold uppercase tracking-[0.14em] text-white/40">
                       {item.label}
@@ -87,7 +88,7 @@ export default function Footer() {
         <div className="mt-10 flex flex-col gap-3 border-t border-white/10 pt-6 text-sm sm:flex-row sm:items-center sm:justify-between">
           <p>© {year} Bilal Ahmed. All photographs by the artist.</p>
           <a
-            href="#home"
+            href="/#home"
             className="inline-flex items-center gap-1.5 self-start font-semibold text-clay no-underline transition-colors hover:text-white sm:self-auto"
           >
             Back to top <span aria-hidden="true">↑</span>
