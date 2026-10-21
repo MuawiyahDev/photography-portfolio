@@ -1,3 +1,7 @@
+// Default gallery tabs, used ONLY by prisma/seed.js to bootstrap the
+// Category table. The live tab list is read from the database via
+// src/lib/categories.js — nothing in the UI imports this anymore.
+// ("all" is a view, not a stored category; the seed skips it.)
 export const CATEGORIES = [
   { value: "all", label: "All" },
   { value: "portraits", label: "Portraits" },
@@ -7,10 +11,6 @@ export const CATEGORIES = [
   { value: "nature", label: "Nature" },
   { value: "fine-art", label: "Fine Art" },
 ];
-
-export const CATEGORY_LABELS = Object.fromEntries(
-  CATEGORIES.map((c) => [c.value, c.label]),
-);
 
 /**
  * Single source of truth for the portfolio grid.

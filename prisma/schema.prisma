@@ -1,0 +1,112 @@
+// Prisma schema — the shape of your PostgreSQL database.
+// Run `npx prisma migrate dev` after changing this file.
+
+generator client {
+  provider      = "prisma-client-js"
+  // "native" covers local dev; the others cover common deployment
+  // runtimes (Vercel serverless = rhel-openssl-3.0.x).
+  binaryTargets = ["native", "debian-openssl-3.0.x", "rhel-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// A registered account. `passwordHash` stores a bcrypt hash —
+// never the plain-text password. `role` decides what the user
+// may do: "ADMIN" can create works; "USER" cannot.
+model User {
+  id           String     @id @default(cuid())
+  name         String?
+  email        String     @unique
+  passwordHash String
+  role         String     @default("USER")
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  favorites    Favorite[]
+  ratings      Rating[]
+}
+
+// One portfolio photograph shown in the gallery grid.
+// `slug` is the stable public id (e.g. "theo-daylight").
+// `span` drives the mosaic layout: "wide" | "tall" | null.
+model Work {
+  id          String     @id @default(cuid())
+  slug        String     @unique
+  title       String
+  category    String
+  src         String
+  alt         String
+  width       Int
+  height      Int
+  span        String?
+  description String?
+  link        String?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  favorites   Favorite[]
+  ratings     Rating[]
+}
+
+// Which works a user has favorited. The unique pair constraint means
+// you can never save the same work twice — the database enforces it.
+model Favorite {
+  id        String   @id @default(cuid())
+  userId    String
+  workId    String
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  work      Work     @relation(fields: [workId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, workId])
+}
+
+// A user's star rating (1–5) of one work — account-based, exactly
+// like Favorite: it survives a new device. value 0 is never stored;
+// un-rating deletes the row.
+model Rating {
+  id        String   @id @default(cuid())
+  userId    String
+  workId    String
+  value     Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  work      Work     @relation(fields: [workId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, workId])
+}
+
+// An inquiry submitted through the contact form.
+model Inquiry {
+  id          String   @id @default(cuid())
+  name        String
+  email       String
+  projectType String
+  message     String
+  createdAt   DateTime @default(now())
+}
+
+// Editable site content managed by the admin dashboard.
+// One row per section: key = "hero" | "about" | "contact".
+// `data` is a JSON document shaped by that section's zod schema.
+model SiteSetting {
+  key       String   @id
+  data      Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Gallery categories (the portfolio filter tabs), managed in the
+// dashboard. Work.category stores the category's slug as a string —
+// routes validate it exists on write, and a category can't be
+// deleted while works still use it.
+model Category {
+  id        String   @id @default(cuid())
+  slug      String   @unique
+  label     String
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
