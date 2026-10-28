@@ -56,10 +56,17 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   callbacks: {
     // On sign-in, `user` is the object returned by authorize() above.
     // Stash id + role inside the JWT so every later request can use them.
-    jwt({ token, user }) {
+    jwt({ token, user, trigger, newSession }) {
       if (user) {
         token.id = user.id;
         token.role = user.role;
+      }
+      // After a profile edit the client calls useSession().update()
+      // with the fresh name/email, so the header dropdown reflects the
+      // change immediately instead of showing stale token values.
+      if (trigger === "update" && newSession) {
+        if (typeof newSession.name === "string") token.name = newSession.name;
+        if (typeof newSession.email === "string") token.email = newSession.email;
       }
       return token;
     },
