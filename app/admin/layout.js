@@ -13,16 +13,22 @@ export default async function AdminLayout({ children }) {
   if (!admin) redirect("/login");
 
   // Badge counts shared with the sidebar (one cheap count per render).
-  const [inquiryCount, workCount, userCount] = await Promise.all([
+  const [inquiryCount, workCount, userCount, orderCount] = await Promise.all([
     prisma.inquiry.count(),
     prisma.work.count(),
     prisma.user.count(),
+    prisma.order.count(),
   ]);
 
   return (
     <AdminShell
       user={{ name: admin.name, email: admin.email, role: admin.role }}
-      badges={{ inquiries: inquiryCount, works: workCount, users: userCount }}
+      badges={{
+        inquiries: inquiryCount,
+        works: workCount,
+        users: userCount,
+        orders: orderCount,
+      }}
     >
       {children}
     </AdminShell>
