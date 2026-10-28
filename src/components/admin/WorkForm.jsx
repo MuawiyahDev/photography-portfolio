@@ -27,6 +27,7 @@ const EMPTY = {
   span: "",
   description: "",
   link: "",
+  price: "",
 };
 
 function toFormValues(work, categories) {
@@ -44,6 +45,11 @@ function toFormValues(work, categories) {
     span: work.span ?? "",
     description: work.description ?? "",
     link: work.link ?? "",
+    // priceCents (integer) → dollars string; empty = not for sale.
+    price:
+      Number.isInteger(work.priceCents) && work.priceCents > 0
+        ? (work.priceCents / 100).toFixed(2)
+        : "",
   };
 }
 
@@ -70,6 +76,24 @@ export default function WorkForm({ work, categories = [] }) {
   const handleSubmit = async (event) => {
     event.preventDefault();
     setStatus(null);
+
+    // Dollars (string) → integer cents. Empty = not for sale (null).
+    // Reject non-numeric input client-side so NaN can never serialize
+    // to JSON null and silently wipe a price.
+    const rawPrice = values.price.trim();
+    let priceCents = null;
+    if (rawPrice !== "") {
+      const dollars = Number(rawPrice);
+      if (!Number.isFinite(dollars) || dollars <= 0) {
+        setFieldErrors((prev) => ({
+          ...prev,
+          priceCents: "Enter a price like 45.00, or leave empty.",
+        }));
+        return;
+      }
+      priceCents = Math.round(dollars * 100);
+    }
+
     setSaving(true);
 
     const payload = {
@@ -82,6 +106,7 @@ export default function WorkForm({ work, categories = [] }) {
       span: values.span || null,
       description: values.description.trim() || null,
       link: values.link.trim() || null,
+      priceCents,
       ...(isEdit ? {} : { slug: values.slug.trim() }),
     };
 
@@ -217,6 +242,29 @@ export default function WorkForm({ work, categories = [] }) {
                 ))
               )}
             </select>
+          )}
+        </Field>
+
+        <Field
+          id="work-price"
+          label="Print price (USD)"
+          hint="Shown as the Buy print price — e.g. 45.00. Leave empty to hide the buy button."
+          error={fieldErrors.priceCents}
+        >
+          {(a11y) => (
+            <input
+              id="work-price"
+              name="price"
+              type="number"
+              inputMode="decimal"
+              min="0"
+              step="0.01"
+              placeholder="Not for sale"
+              value={values.price}
+              onChange={handleChange}
+              className={inputClass}
+              {...a11y}
+            />
           )}
         </Field>
       </FormSection>

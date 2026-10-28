@@ -1,5 +1,7 @@
 import HeartIcon from "./ui/HeartIcon.jsx";
 import StarRating from "./StarRating.jsx";
+import BuyButton from "./BuyButton.jsx";
+import { formatMoney } from "@/lib/money.js";
 
 /**
  * Fitted card: the image keeps its native aspect (h-auto), so square,
@@ -68,6 +70,16 @@ export default function GalleryCard({
           size="sm"
           label={`Rate ${work.title}`}
         />
+        {/* Print price + Buy print — only when the work has a price.
+            The server validates everything; this is presentation only. */}
+        {Number.isInteger(work.priceCents) && work.priceCents > 0 ? (
+          <div className="mt-1 flex items-end justify-between gap-3">
+            <span className="text-sm font-semibold tabular-nums text-white/95">
+              {formatMoney(work.priceCents, work.currency)}
+            </span>
+            <BuyButton slug={work.id} />
+          </div>
+        ) : null}
       </figcaption>
     </figure>
   );

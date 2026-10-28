@@ -3,6 +3,7 @@
 // section only needs one entry to appear everywhere.
 import {
   IconAbout,
+  IconBag,
   IconContact,
   IconHero,
   IconOverview,
@@ -53,6 +54,12 @@ export const NAV_SECTIONS = [
         icon: IconUsers,
         badgeKey: "users",
       },
+      {
+        href: "/admin/orders",
+        label: "Orders",
+        icon: IconBag,
+        badgeKey: "orders",
+      },
     ],
   },
 ];
@@ -68,4 +75,13 @@ export const SEGMENT_LABELS = {
   about: "About",
   contact: "Contact",
   users: "Users",
+  orders: "Orders",
+};
+
+// Friendly labels for dynamic route segments ([slug]/[id]) — keyed by
+// the PARENT segment, since the child segment itself is the raw id.
+export const DETAIL_SEGMENT_LABELS = {
+  works: "Edit work",
+  users: "Customer details",
+  orders: "Order details",
 };

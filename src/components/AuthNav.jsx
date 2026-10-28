@@ -107,6 +107,22 @@ export default function AuthNav() {
             <p className="truncate px-3 py-2 text-xs font-bold uppercase tracking-[0.14em] text-muted dark:text-white/45">
               {session.user.email}
             </p>
+            <Link
+              href="/account"
+              role="menuitem"
+              onClick={() => setOpen(false)}
+              className="block rounded-xl px-3 py-2.5 text-sm font-semibold text-ink transition-colors hover:bg-cream dark:text-cream dark:hover:bg-white/10"
+            >
+              Account information
+            </Link>
+            <Link
+              href="/orders"
+              role="menuitem"
+              onClick={() => setOpen(false)}
+              className="block rounded-xl px-3 py-2.5 text-sm font-semibold text-ink transition-colors hover:bg-cream dark:text-cream dark:hover:bg-white/10"
+            >
+              My orders
+            </Link>
             {isAdmin ? (
               <Link
                 href="/admin"

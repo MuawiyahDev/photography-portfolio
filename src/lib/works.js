@@ -18,6 +18,10 @@ export function toPublicWork(work) {
     span: work.span,
     description: work.description ?? null,
     link: work.link ?? null,
+    // null price = not for sale; the gallery only shows a buy button
+    // when priceCents is a positive integer.
+    priceCents: work.priceCents ?? null,
+    currency: work.currency ?? "USD",
   };
 }
 

@@ -6,7 +6,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { IconMenu, IconChevronRight, IconExternal } from "@/components/ui/icons.jsx";
-import { SEGMENT_LABELS } from "./nav.js";
+import { SEGMENT_LABELS, DETAIL_SEGMENT_LABELS } from "./nav.js";
 
 function buildBreadcrumbs(pathname) {
   const crumbs = [{ label: "Dashboard", href: "/admin" }];
@@ -16,8 +16,10 @@ function buildBreadcrumbs(pathname) {
     const isLast = index === segments.length - 1;
     const label =
       SEGMENT_LABELS[segment] ??
-      // Dynamic [slug] segment — show a friendly label.
-      (isLast && index === segments.length - 1 ? "Edit work" : segment);
+      // Dynamic [slug]/[id] segment — label it from its parent section.
+      (isLast
+        ? DETAIL_SEGMENT_LABELS[segments[index - 1]] ?? "Details"
+        : segment);
     const href = isLast
       ? undefined
       : `/admin/${segments.slice(0, index + 1).join("/")}`;

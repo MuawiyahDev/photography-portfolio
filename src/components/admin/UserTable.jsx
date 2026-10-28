@@ -12,7 +12,7 @@ import Card from "@/components/ui/Card.jsx";
 import ConfirmDialog from "@/components/ui/ConfirmDialog.jsx";
 import DropdownMenu from "@/components/ui/DropdownMenu.jsx";
 import { useToast } from "@/components/ui/Toast.jsx";
-import { IconDots, IconShield, IconTrash, IconUsers } from "@/components/ui/icons.jsx";
+import { IconDots, IconEye, IconShield, IconTrash, IconUsers } from "@/components/ui/icons.jsx";
 
 function initials(name, email) {
   const source = (name ?? email ?? "?").trim();
@@ -174,6 +174,11 @@ export default function UserTable({ users, currentUserId }) {
                           }
                           items={[
                             {
+                              label: "View details",
+                              href: `/admin/users/${user.id}`,
+                              icon: <IconEye className="h-4 w-4" />,
+                            },
+                            {
                               label:
                                 user.role === "ADMIN"
                                   ? "Remove admin"
@@ -248,6 +253,11 @@ export default function UserTable({ users, currentUserId }) {
                       </button>
                     }
                     items={[
+                      {
+                        label: "View details",
+                        href: `/admin/users/${user.id}`,
+                        icon: <IconEye className="h-4 w-4" />,
+                      },
                       {
                         label:
                           user.role === "ADMIN"

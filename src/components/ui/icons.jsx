@@ -237,6 +237,13 @@ export const IconShield = (props) => (
   </Icon>
 );
 
+export const IconBag = (props) => (
+  <Icon {...props}>
+    <path d="M5.5 8h13l-1.1 12a1 1 0 0 1-1 .9H7.6a1 1 0 0 1-1-.9L5.5 8z" />
+    <path d="M9 8V6.5a3 3 0 0 1 6 0V8" />
+  </Icon>
+);
+
 export const IconLoader = (props) => (
   <Icon {...props} className={`${props.className ?? ""} animate-spin`}>
     <path d="M12 3a9 9 0 1 0 9 9" />
