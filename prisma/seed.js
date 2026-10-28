@@ -74,6 +74,37 @@ async function seedWorks() {
   console.log(`Works: ${created} created, ${updated} updated.`);
 }
 
+// Default print prices (integer cents) for the seeded gallery.
+// Applied ONLY to works that have no price yet (priceCents IS NULL),
+// so a price an admin sets in the dashboard is never overwritten by
+// a reseed. Works without an entry here are simply not for sale.
+const DEFAULT_PRINT_PRICES = {
+  "theo-daylight": 5500,
+  "golden-hour": 5500,
+  "white-museum": 4500,
+  "rush-hour": 4500,
+  "cedar-path": 4000,
+  "jonas": 5500,
+  "glass-grid": 4500,
+  "blue-hour": 6500,
+  "first-fog": 6500,
+  "ochre-study": 7500,
+};
+
+async function seedPrintPrices() {
+  let set = 0;
+  for (const [slug, priceCents] of Object.entries(DEFAULT_PRINT_PRICES)) {
+    const result = await prisma.work.updateMany({
+      where: { slug, priceCents: null },
+      data: { priceCents },
+    });
+    set += result.count;
+  }
+  console.log(
+    `Print prices: ${set} set (existing prices left untouched).`,
+  );
+}
+
 // The original hardcoded content from src/data/site.js, as the first
 // version of the CMS-managed sections. `update: {}` means a rerun will
 // NOT overwrite anything the admin has edited in the dashboard.
@@ -203,6 +234,7 @@ async function seedAdmin() {
 async function main() {
   await seedCategories();
   await seedWorks();
+  await seedPrintPrices();
   await seedSettings();
   await seedAdmin();
 }

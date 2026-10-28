@@ -26,6 +26,7 @@ model User {
   updatedAt    DateTime   @updatedAt
   favorites    Favorite[]
   ratings      Rating[]
+  orders       Order[]
 }
 
 // One portfolio photograph shown in the gallery grid.
@@ -43,10 +44,67 @@ model Work {
   span        String?
   description String?
   link        String?
+  // Print price in MINOR units (cents) — never a float, so no
+  // floating-point drift. NULL = not for sale (no buy button).
+  priceCents  Int?
+  currency    String     @default("USD")
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
   favorites   Favorite[]
   ratings     Rating[]
+  orderItems  OrderItem[]
+}
+
+// Lifecycle of one purchase attempt. Only the verified Stripe webhook
+// may move an order to PAID (see app/api/webhooks/stripe/route.js).
+enum OrderStatus {
+  PENDING
+  PAID
+  FAILED
+  CANCELLED
+}
+
+// One checkout attempt by a signed-in user. Money columns are integers
+// in the currency's minor unit (e.g. USD cents).
+// `requestId` is a client-generated per-attempt id: the unique index
+// makes duplicate/rapid double-click submissions reuse the same order
+// instead of creating a second one.
+model Order {
+  id                      String      @id @default(cuid())
+  userId                  String
+  status                  OrderStatus @default(PENDING)
+  currency                String      @default("USD")
+  subtotalCents           Int
+  totalCents              Int
+  requestId               String?     @unique
+  stripeCheckoutSessionId String?     @unique
+  stripePaymentIntentId   String?
+  paidAt                  DateTime?
+  createdAt               DateTime    @default(now())
+  updatedAt               DateTime    @updatedAt
+  user                    User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items                   OrderItem[]
+
+  @@index([userId, createdAt])
+}
+
+// A line on an order. Title and price are purchase-time SNAPSHOTs:
+// editing or even deleting the photograph later never rewrites
+// what the customer actually paid.
+model OrderItem {
+  id             String   @id @default(cuid())
+  orderId        String
+  workId         String
+  workTitle      String
+  unitPriceCents Int
+  quantity       Int
+  lineTotalCents Int
+  order          Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  // Restrict: an admin cannot delete a photograph that appears on a
+  // paid order — order history must stay intact.
+  work           Work     @relation(fields: [workId], references: [id], onDelete: Restrict)
+
+  @@index([orderId])
 }
 
 // Which works a user has favorited. The unique pair constraint means
