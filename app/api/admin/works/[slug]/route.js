@@ -77,6 +77,17 @@ export async function DELETE(request, { params }) {
     if (error?.code === "P2025") {
       return NextResponse.json({ error: "Work not found." }, { status: 404 });
     }
+    // P2003 = foreign key (RESTRICT): the photograph appears on an
+    // order item and its purchase history must stay intact.
+    if (error?.code === "P2003") {
+      return NextResponse.json(
+        {
+          error:
+            "This photograph appears on a past order and can't be deleted — its purchase history must stay intact.",
+        },
+        { status: 409 },
+      );
+    }
     console.error("DELETE /api/admin/works failed:", error);
     return NextResponse.json(
       { error: "Could not delete the work." },
