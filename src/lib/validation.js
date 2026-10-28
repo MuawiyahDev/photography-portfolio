@@ -45,6 +45,9 @@ export const workSchema = z.object({
   span: z.enum(["wide", "tall"]).nullable().optional(),
   description: z.string().trim().max(2000).nullable().optional(),
   link: z.string().trim().max(500).nullable().optional(),
+  // Print price in integer cents. null/omitted = not for sale.
+  // $1.00–$10,000.00 — rejected below that as a data-entry mistake.
+  priceCents: z.number().int().min(100).max(1_000_000).nullable().optional(),
 });
 
 // Editing an existing work: every field optional, same rules when present.
@@ -68,6 +71,36 @@ export const favoriteSchema = z.object({
     .min(1)
     .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "invalid work slug"),
 });
+
+// POST /api/checkout — start a Stripe Checkout session.
+// NOTE: no price field exists here on purpose. The server looks the
+// price up from the Work row; a client-sent price is never accepted.
+// `requestId` is a client-generated per-attempt UUID used only to make
+// duplicate submissions idempotent (unique index on Order.requestId).
+export const checkoutSchema = z.object({
+  slug: z
+    .string()
+    .trim()
+    .min(1)
+    .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "invalid work slug"),
+  quantity: z.number().int().min(1).max(10),
+  requestId: z
+    .string()
+    .trim()
+    .min(8)
+    .max(64)
+    .regex(/^[A-Za-z0-9_-]+$/, "invalid request id")
+    .optional(),
+});
+
+// Order id used in success-page and lookup URLs (cuid-shaped).
+export const orderIdSchema = z
+  .string()
+  .trim()
+  .min(1)
+  .max(64)
+  .regex(/^[A-Za-z0-9]+$/, "invalid order id");
+
 
 // A star rating from the gallery (signed-in users only).
 // value 0 means "remove my rating" and deletes the row.
@@ -106,6 +139,28 @@ export const categoryUpdateSchema = z.object({
 export const userRoleUpdateSchema = z.object({
   role: z.enum(["USER", "ADMIN"]),
 });
+
+// PATCH /api/account — the signed-in user edits their own profile.
+// Same rules as registration; the route scopes the update to
+// session.user.id, so it can only ever touch the caller's own row.
+export const accountUpdateSchema = z.object({
+  name: z.string().trim().min(2).max(120),
+  email: z.string().trim().toLowerCase().email().max(254),
+});
+
+// PATCH /api/account/password — change password. The route verifies
+// `currentPassword` against the stored bcrypt hash before writing
+// anything; `newPassword` must differ from it (a "change" that keeps
+// the same password is always a mistake).
+export const passwordChangeSchema = z
+  .object({
+    currentPassword: z.string().min(1).max(100),
+    newPassword: z.string().min(8).max(100),
+  })
+  .refine((data) => data.newPassword !== data.currentPassword, {
+    message: "Choose a password different from your current one.",
+    path: ["newPassword"],
+  });
 
 // ---------------------------------------------------------------------------
 // Admin CMS — schemas for the editable site sections (SiteSetting.data).
